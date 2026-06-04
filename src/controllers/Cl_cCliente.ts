@@ -28,16 +28,29 @@ export default class Cl_cCliente {
     }
 
     public agregarAlCarrito(codigo: string, cantidad: number) {
-        const producto = this.productos.find(p => p.codigo === codigo);
-        if (!producto) return;
-        this.carrito.agregar(producto, cantidad);
-        this.actualizarVistaCarrito();
-    }
+    const producto = this.productos.find(p => p.codigo === codigo);
+    if (!producto) return;
+    
+    this.carrito.agregar(producto, cantidad);
+    
+    // Actualizar vista del carrito y total inmediatamente
+    this.vista.mostrarCarrito(this.carrito.getItems());
+    this.vista.mostrarTotal(this.carrito.calcularTotal());
+}
 
-    public eliminarDelCarrito(codigo: string) {
-        this.carrito.eliminar(codigo);
-        this.actualizarVistaCarrito();
-    }
+    // En tu método eliminarDelCarrito en Cl_cCliente.ts
+public eliminarDelCarrito(codigo: string) {
+    // 1. Eliminamos del modelo Carrito
+    this.carrito.eliminar(codigo);
+    
+    // 2. Actualizamos las tablas y el total
+    this.vista.mostrarCarrito(this.carrito.getItems());
+    this.vista.mostrarTotal(this.carrito.calcularTotal());
+    
+    // 3. ¡AQUÍ ESTÁ LA SOLUCIÓN! 
+    // Reseteamos el contador visual en la tarjeta del producto
+    this.vista.resetContador(codigo);
+}
 
     public actualizarVistaCarrito() {
         this.vista.mostrarCarrito(this.carrito.getItems());

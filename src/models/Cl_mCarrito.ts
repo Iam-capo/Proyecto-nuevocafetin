@@ -12,20 +12,25 @@ export default class Cl_mCarrito {
         return [...this.items];
     }
 
-    agregar(producto: { codigo: string; nombre: string; precio: number }, cantidad: number): void {
-        if (cantidad <= 0) return;
-        const existente = this.items.find(item => item.codigo === producto.codigo);
-        if (existente) {
-            existente.cantidad += cantidad;
-        } else {
-            this.items.push({
-                codigo: producto.codigo,
-                nombre: producto.nombre,
-                precio: producto.precio,
-                cantidad: cantidad
-            });
+    // En Cl_mCarrito.ts
+agregar(producto: { codigo: string; nombre: string; precio: number }, cantidad: number): void {
+    const existente = this.items.find(item => item.codigo === producto.codigo);
+    
+    if (existente) {
+        existente.cantidad += cantidad;
+        // Si la cantidad llega a 0, eliminamos el item del carrito
+        if (existente.cantidad <= 0) {
+            this.eliminar(producto.codigo);
         }
+    } else if (cantidad > 0) {
+        this.items.push({
+            codigo: producto.codigo,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            cantidad: cantidad
+        });
     }
+}
 
     eliminar(codigo: string): void {
         this.items = this.items.filter(item => item.codigo !== codigo);

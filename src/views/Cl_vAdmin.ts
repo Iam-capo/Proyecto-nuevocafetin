@@ -35,6 +35,14 @@ export default class Cl_vAdmin implements I_vAdmin {
         if (this.modalEl && (window as any).bootstrap) {
             this.modalInstance = new (window as any).bootstrap.Modal(this.modalEl);
         }
+
+        const inputArchivo = document.getElementById("prodImagenFile") as HTMLInputElement;
+        inputArchivo.addEventListener("change", () => {
+            const file = inputArchivo.files?.[0];
+            if (file) {
+                (document.getElementById("prodImagenNombre") as HTMLInputElement).value = file.name;
+                }
+                });
     }
 
     mostrarPedidos(pedidos: any[]): void {
@@ -86,19 +94,21 @@ export default class Cl_vAdmin implements I_vAdmin {
         (document.getElementById("prodNombre") as HTMLInputElement).value = prod.nombre;
         (document.getElementById("prodCategoria") as HTMLInputElement).value = prod.categoria;
         (document.getElementById("prodPrecio") as HTMLInputElement).value = prod.precio;
+        (document.getElementById("prodImagenNombre") as HTMLInputElement).value = prod.imagen;
         this.productoEditandoId = prod.id;
     }
 
     guardarProducto() {
         const codigo = (document.getElementById("prodCodigo") as HTMLInputElement).value.trim();
         const nombre = (document.getElementById("prodNombre") as HTMLInputElement).value.trim();
+        const imagen = (document.getElementById("prodImagenNombre") as HTMLInputElement).value.trim();
         const categoria = (document.getElementById("prodCategoria") as HTMLInputElement).value.trim();
         const precio = parseFloat((document.getElementById("prodPrecio") as HTMLInputElement).value);
         if (!codigo || !nombre || !categoria || isNaN(precio)) {
             this.mostrarModal("warning", "Complete todos los campos correctamente");
             return;
         }
-        this.guardarProductoCallback?.({ id: this.productoEditandoId, codigo, nombre, categoria, precio });
+        this.guardarProductoCallback?.({ id: this.productoEditandoId, codigo, nombre, categoria, precio, imagen });
         this.formProducto.reset();
         this.productoEditandoId = null;
     }

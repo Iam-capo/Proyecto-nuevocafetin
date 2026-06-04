@@ -57,32 +57,48 @@ export default class Cl_vCliente implements I_vCliente {
         this.enviarCallback = callback;
     }
 
-    mostrarProductos(productos: any[]): void {
-        this.divProductos.innerHTML = "";
-        productos.forEach(prod => {
-            const card = document.createElement("div");
-            card.className = "col-md-4 mb-3";
-            card.innerHTML = `
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">${prod.nombre}</h5>
-                        <p class="card-text"><small>Categoría: ${prod.categoria}</small><br><strong>$${prod.precio.toFixed(2)}</strong></p>
-                        <div class="input-group input-group-sm mb-2">
-                            <input type="number" id="cant-${prod.codigo}" class="form-control" value="1" min="1">
-                            <button class="btn btn-primary btn-agregar" data-codigo="${prod.codigo}">Agregar</button>
-                        </div>
-                    </div>
+    // En Cl_vCliente.ts, dentro del método mostrarProductos
+// Dentro de tu método mostrarProductos en Cl_vCliente.ts
+mostrarProductos(productos: any[]): void {
+    this.divProductos.innerHTML = "";
+    productos.forEach(prod => {
+        const div = document.createElement("div");
+        div.className = "col-md-3 mb-4";
+        div.innerHTML = `
+            <div class="card-prod shadow-sm">
+                <img src="img/${prod.imagen || 'default.png'}" class="img-fluid mb-2" style="height: 80px;">
+                <h6>${prod.nombre}</h6>
+                <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
+                <div class="control-cantidad">
+                    <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
+                    <span id="cant-${prod.codigo}" class="fs-5">0</span>
+                    <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
                 </div>
-            `;
-            const btn = card.querySelector(".btn-agregar") as HTMLButtonElement;
-            btn.onclick = () => {
-                const input = document.getElementById(`cant-${prod.codigo}`) as HTMLInputElement;
-                const cantidad = parseInt(input.value) || 1;
-                this.agregarCallback?.(prod.codigo, cantidad);
-            };
-            this.divProductos.appendChild(card);
+            </div>
+        `;
+        
+        const display = div.querySelector(`#cant-${prod.codigo}`) as HTMLElement;
+        let cantidad = 0;
+
+        div.querySelector(".btn-plus")!.addEventListener("click", () => {
+            cantidad++;
+            display.textContent = cantidad.toString();
+            // Notificamos al controlador el cambio inmediato
+            this.agregarCallback?.(prod.codigo, 1); 
         });
-    }
+        
+        div.querySelector(".btn-minus")!.addEventListener("click", () => {
+            if (cantidad > 0) {
+                cantidad--;
+                display.textContent = cantidad.toString();
+                // Notificamos para restar al carrito (cantidad negativa)
+                this.agregarCallback?.(prod.codigo, -1);
+            }
+        });
+
+        this.divProductos.appendChild(div);
+    });
+}  
 
     mostrarCarrito(items: { codigo: string; nombre: string; precio: number; cantidad: number }[]): void {
         this.tablaCarrito.innerHTML = "";
@@ -119,4 +135,14 @@ export default class Cl_vCliente implements I_vCliente {
         this.inDescOtro.value = "";
         this.cambiarMetodoPago();
     }
+
+    // Agrega este método a tu clase Cl_vCliente
+resetContador(codigo: string): void {
+    const span = document.getElementById(`cant-${codigo}`) as HTMLElement;
+    if (span) {
+        span.textContent = "0";
+        // También debemos resetear la variable local si la tienes guardada
+        // En este diseño, el span es nuestra fuente de verdad visual
+    }
+}
 }

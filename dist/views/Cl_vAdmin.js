@@ -30,6 +30,13 @@ export default class Cl_vAdmin {
         if (this.modalEl && window.bootstrap) {
             this.modalInstance = new window.bootstrap.Modal(this.modalEl);
         }
+        const inputArchivo = document.getElementById("prodImagenFile");
+        inputArchivo.addEventListener("change", () => {
+            const file = inputArchivo.files?.[0];
+            if (file) {
+                document.getElementById("prodImagenNombre").value = file.name;
+            }
+        });
     }
     mostrarPedidos(pedidos) {
         this.tablaPedidos.innerHTML = "";
@@ -78,18 +85,20 @@ export default class Cl_vAdmin {
         document.getElementById("prodNombre").value = prod.nombre;
         document.getElementById("prodCategoria").value = prod.categoria;
         document.getElementById("prodPrecio").value = prod.precio;
+        document.getElementById("prodImagenNombre").value = prod.imagen;
         this.productoEditandoId = prod.id;
     }
     guardarProducto() {
         const codigo = document.getElementById("prodCodigo").value.trim();
         const nombre = document.getElementById("prodNombre").value.trim();
+        const imagen = document.getElementById("prodImagenNombre").value.trim();
         const categoria = document.getElementById("prodCategoria").value.trim();
         const precio = parseFloat(document.getElementById("prodPrecio").value);
         if (!codigo || !nombre || !categoria || isNaN(precio)) {
             this.mostrarModal("warning", "Complete todos los campos correctamente");
             return;
         }
-        this.guardarProductoCallback?.({ id: this.productoEditandoId, codigo, nombre, categoria, precio });
+        this.guardarProductoCallback?.({ id: this.productoEditandoId, codigo, nombre, categoria, precio, imagen });
         this.formProducto.reset();
         this.productoEditandoId = null;
     }

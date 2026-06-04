@@ -4,12 +4,14 @@ export default class Cl_mProducto {
     _nombre = "";
     _categoria = "";
     _precio = 0;
-    constructor({ id, codigo, nombre, categoria, precio }) {
+    _imagen = "";
+    constructor({ id, codigo, nombre, categoria, precio, imagen }) {
         this._id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.categoria = categoria;
         this.precio = precio;
+        this._imagen = imagen;
     }
     get id() { return this._id; }
     set codigo(value) { this._codigo = value; }
@@ -20,13 +22,16 @@ export default class Cl_mProducto {
     get categoria() { return this._categoria; }
     set precio(value) { this._precio = value; }
     get precio() { return this._precio; }
+    set imagen(value) { this._imagen = value; }
+    get imagen() { return this._imagen; }
     toJSON() {
         return {
             tabla: "producto",
             codigo: this.codigo,
             nombre: this.nombre,
             categoria: this.categoria,
-            precio: this.precio
+            precio: this.precio,
+            imagen: this.imagen
         };
     }
 }

@@ -1,5 +1,5 @@
 import Cl_sMockApi from "./Cl_sMockApi.js";
 
 export default class Cl_sProductoApi extends Cl_sMockApi {
-  protected static apiUrl = "https://6a1a4dd1bc2f94475491f3b8.mockapi.io/producto";
+  protected static apiUrl = "https://6a12729c78d0434e0d5d37b9.mockapi.io/Producto";
 }

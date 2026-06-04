@@ -3,6 +3,7 @@ export default interface I_vCliente {
     get metodoPago(): string;
     get referenciaPago(): string;
     get descripcionOtro(): string;
+    resetContador(codigo: string): void;
     onAgregarProducto(callback: (codigo: string, cantidad: number) => void): void;
     onEliminarProducto(callback: (codigo: string) => void): void;
     onEnviar(callback: () => void): void;

@@ -28,11 +28,20 @@ export default class Cl_cCliente {
         if (!producto)
             return;
         this.carrito.agregar(producto, cantidad);
-        this.actualizarVistaCarrito();
+        // Actualizar vista del carrito y total inmediatamente
+        this.vista.mostrarCarrito(this.carrito.getItems());
+        this.vista.mostrarTotal(this.carrito.calcularTotal());
     }
+    // En tu método eliminarDelCarrito en Cl_cCliente.ts
     eliminarDelCarrito(codigo) {
+        // 1. Eliminamos del modelo Carrito
         this.carrito.eliminar(codigo);
-        this.actualizarVistaCarrito();
+        // 2. Actualizamos las tablas y el total
+        this.vista.mostrarCarrito(this.carrito.getItems());
+        this.vista.mostrarTotal(this.carrito.calcularTotal());
+        // 3. ¡AQUÍ ESTÁ LA SOLUCIÓN! 
+        // Reseteamos el contador visual en la tarjeta del producto
+        this.vista.resetContador(codigo);
     }
     actualizarVistaCarrito() {
         this.vista.mostrarCarrito(this.carrito.getItems());

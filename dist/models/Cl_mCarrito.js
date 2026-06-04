@@ -3,14 +3,17 @@ export default class Cl_mCarrito {
     getItems() {
         return [...this.items];
     }
+    // En Cl_mCarrito.ts
     agregar(producto, cantidad) {
-        if (cantidad <= 0)
-            return;
         const existente = this.items.find(item => item.codigo === producto.codigo);
         if (existente) {
             existente.cantidad += cantidad;
+            // Si la cantidad llega a 0, eliminamos el item del carrito
+            if (existente.cantidad <= 0) {
+                this.eliminar(producto.codigo);
+            }
         }
-        else {
+        else if (cantidad > 0) {
             this.items.push({
                 codigo: producto.codigo,
                 nombre: producto.nombre,
