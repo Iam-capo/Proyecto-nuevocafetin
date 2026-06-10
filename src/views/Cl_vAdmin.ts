@@ -106,9 +106,19 @@ export default class Cl_vAdmin implements I_vAdmin {
     guardarProducto() {
         const codigo = (document.getElementById("prodCodigo") as HTMLInputElement).value.trim();
         const nombre = (document.getElementById("prodNombre") as HTMLInputElement).value.trim();
-        const imagen = (document.getElementById("prodImagenNombre") as HTMLInputElement).value.trim();
         const categoria = (document.getElementById("prodCategoria") as HTMLInputElement).value.trim();
         const precio = parseFloat((document.getElementById("prodPrecio") as HTMLInputElement).value);
+        
+        const inputArchivo = document.getElementById("prodImagenFile") as HTMLInputElement;
+        const file = inputArchivo.files?.[0];
+        let imagen = "";
+        
+        if (file) {
+            imagen = file.name;
+        } else {
+            imagen = (document.getElementById("prodImagenNombre") as HTMLInputElement).value.trim();
+        }
+
         if (!codigo || !nombre || !categoria || isNaN(precio)) {
             this.mostrarModal("warning", "Complete todos los campos correctamente");
             return;

@@ -96,9 +96,17 @@ export default class Cl_vAdmin {
     guardarProducto() {
         const codigo = document.getElementById("prodCodigo").value.trim();
         const nombre = document.getElementById("prodNombre").value.trim();
-        const imagen = document.getElementById("prodImagenNombre").value.trim();
         const categoria = document.getElementById("prodCategoria").value.trim();
         const precio = parseFloat(document.getElementById("prodPrecio").value);
+        const inputArchivo = document.getElementById("prodImagenFile");
+        const file = inputArchivo.files?.[0];
+        let imagen = "";
+        if (file) {
+            imagen = file.name;
+        }
+        else {
+            imagen = document.getElementById("prodImagenNombre").value.trim();
+        }
         if (!codigo || !nombre || !categoria || isNaN(precio)) {
             this.mostrarModal("warning", "Complete todos los campos correctamente");
             return;

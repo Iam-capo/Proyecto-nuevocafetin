@@ -47,25 +47,27 @@ export default class Cl_vCliente {
     onEnviar(callback) {
         this.enviarCallback = callback;
     }
-    // En Cl_vCliente.ts, dentro del método mostrarProductos
-    // Dentro de tu método mostrarProductos en Cl_vCliente.ts
     mostrarProductos(productos) {
         this.divProductos.innerHTML = "";
         productos.forEach(prod => {
             const div = document.createElement("div");
             div.className = "col-md-3 mb-4";
             div.innerHTML = `
-            <div class="card-prod shadow-sm">
-                <img src="img/${prod.imagen || 'default.png'}" class="img-fluid mb-2" style="height: 80px;">
-                <h6>${prod.nombre}</h6>
-                <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
-                <div class="control-cantidad">
-                    <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
-                    <span id="cant-${prod.codigo}" class="fs-5">0</span>
-                    <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
+                <div class="card-prod shadow-sm">
+                    <img src="img/${prod.imagen}" class="img-fluid mb-2" style="height: 80px;">
+                    <h6>${prod.nombre}</h6>
+                    <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
+                    <div class="control-cantidad">
+                        <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
+                        <span id="cant-${prod.codigo}" class="fs-5">0</span>
+                        <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+            const img = div.querySelector("img");
+            img.onerror = () => {
+                img.src = "img/placeholder.png";
+            };
             const display = div.querySelector(`#cant-${prod.codigo}`);
             let cantidad = 0;
             div.querySelector(".btn-plus").addEventListener("click", () => {

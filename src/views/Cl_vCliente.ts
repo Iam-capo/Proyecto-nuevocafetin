@@ -57,48 +57,51 @@ export default class Cl_vCliente implements I_vCliente {
         this.enviarCallback = callback;
     }
 
-    // En Cl_vCliente.ts, dentro del método mostrarProductos
-// Dentro de tu método mostrarProductos en Cl_vCliente.ts
-mostrarProductos(productos: any[]): void {
-    this.divProductos.innerHTML = "";
-    productos.forEach(prod => {
-        const div = document.createElement("div");
-        div.className = "col-md-3 mb-4";
-        div.innerHTML = `
-            <div class="card-prod shadow-sm">
-                <img src="img/${prod.imagen || 'default.png'}" class="img-fluid mb-2" style="height: 80px;">
-                <h6>${prod.nombre}</h6>
-                <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
-                <div class="control-cantidad">
-                    <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
-                    <span id="cant-${prod.codigo}" class="fs-5">0</span>
-                    <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
+    mostrarProductos(productos: any[]): void {
+        this.divProductos.innerHTML = "";
+        productos.forEach(prod => {
+            const div = document.createElement("div");
+            div.className = "col-md-3 mb-4";
+            div.innerHTML = `
+                <div class="card-prod shadow-sm">
+                    <img src="img/${prod.imagen}" class="img-fluid mb-2" style="height: 80px;">
+                    <h6>${prod.nombre}</h6>
+                    <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
+                    <div class="control-cantidad">
+                        <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
+                        <span id="cant-${prod.codigo}" class="fs-5">0</span>
+                        <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
+                    </div>
                 </div>
-            </div>
-        `;
-        
-        const display = div.querySelector(`#cant-${prod.codigo}`) as HTMLElement;
-        let cantidad = 0;
+            `;
+            
+            const img = div.querySelector("img") as HTMLImageElement;
+            img.onerror = () => {
+                img.src = "img/placeholder.png";
+            };
 
-        div.querySelector(".btn-plus")!.addEventListener("click", () => {
-            cantidad++;
-            display.textContent = cantidad.toString();
-            // Notificamos al controlador el cambio inmediato
-            this.agregarCallback?.(prod.codigo, 1); 
-        });
-        
-        div.querySelector(".btn-minus")!.addEventListener("click", () => {
-            if (cantidad > 0) {
-                cantidad--;
+            const display = div.querySelector(`#cant-${prod.codigo}`) as HTMLElement;
+            let cantidad = 0;
+
+            div.querySelector(".btn-plus")!.addEventListener("click", () => {
+                cantidad++;
                 display.textContent = cantidad.toString();
-                // Notificamos para restar al carrito (cantidad negativa)
-                this.agregarCallback?.(prod.codigo, -1);
-            }
-        });
+                // Notificamos al controlador el cambio inmediato
+                this.agregarCallback?.(prod.codigo, 1); 
+            });
+            
+            div.querySelector(".btn-minus")!.addEventListener("click", () => {
+                if (cantidad > 0) {
+                    cantidad--;
+                    display.textContent = cantidad.toString();
+                    // Notificamos para restar al carrito (cantidad negativa)
+                    this.agregarCallback?.(prod.codigo, -1);
+                }
+            });
 
-        this.divProductos.appendChild(div);
-    });
-}  
+            this.divProductos.appendChild(div);
+        });
+    }  
 
     mostrarCarrito(items: { codigo: string; nombre: string; precio: number; cantidad: number }[]): void {
         this.tablaCarrito.innerHTML = "";
