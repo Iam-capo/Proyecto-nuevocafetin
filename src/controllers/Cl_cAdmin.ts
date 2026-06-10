@@ -7,14 +7,14 @@ export default class Cl_cAdmin {
     private vista: I_vAdmin;
     private pedidos: Cl_mPedido[] = [];
     private productos: any[] = [];
-    private filtros = { estado: "Todos", metodoPago: "Todos" };
+    private filtros = { estado: "Todos", metodoPago: "Todos", fecha: "" };
 
     constructor(vista: I_vAdmin) {
         this.vista = vista;
         this.vista.onProcesarPedido((id) => this.procesarPedido(id));
         this.vista.onCancelarPedido((id) => this.cancelarPedido(id));
         this.vista.onFiltrarPedidos((filtros) => {
-            this.filtros = filtros;
+            this.filtros = { ...this.filtros, ...filtros };
             this.vista.mostrarPedidos(this.filtrarPedidos());
         });
         this.vista.onGuardarProducto(async (producto) => await this.guardarProducto(producto));
@@ -23,15 +23,39 @@ export default class Cl_cAdmin {
         setInterval(() => this.cargarPedidos(), 5000);
     }
 
+    private porcentajeMasVendidos() {
+        const counts: Record<string, number> = {};
+        let totalItemsVendidos = 0;
+
+        this.pedidos.forEach(p => {
+            p.items.forEach(i => {
+                counts[i.codigo] = (counts[i.codigo] || 0) + i.cantidad;
+                totalItemsVendidos += i.cantidad;
+            });
+        });
+
+        return this.productos.map(p => {
+            const cantidadVendidoDelProducto = counts[p.codigo] || 0;
+            const popularidad: string = totalItemsVendidos > 0 
+                ? ((cantidadVendidoDelProducto / totalItemsVendidos) * 100).toFixed(2) 
+                : "0.00";
+            return { ...p, popularidad };
+        });
+    }
+    
+
+
     async cargarDatos() {
         await Promise.all([this.cargarProductos(), this.cargarPedidos()]);
+
+        this.vista.mostrarProductos(this.porcentajeMasVendidos());
     }
 
     async cargarProductos() {
         const res = await sProducto.obtenerTodos();
         if (res.ok) {
             this.productos = res.data;
-            this.vista.mostrarProductos(this.productos);
+            this.vista.mostrarProductos(this.porcentajeMasVendidos());
         }
     }
 
@@ -44,6 +68,7 @@ export default class Cl_cAdmin {
                 items: p.Items,
                 metodoPago: p.MetodoPago,
                 detallesPago: p.DetallesPago,
+                fecha: p.Fecha,
                 estado: p.estado
             }));
             this.vista.mostrarPedidos(this.filtrarPedidos());
@@ -54,7 +79,15 @@ export default class Cl_cAdmin {
         return this.pedidos.filter(p => {
             const estadoMatch = this.filtros.estado === "Todos" || p.estado === this.filtros.estado;
             const pagoMatch = this.filtros.metodoPago === "Todos" || p.metodoPago === this.filtros.metodoPago;
-            return estadoMatch && pagoMatch;
+            
+            let fechaMatch = true;
+            if (this.filtros.fecha) {
+                const fechaPedidoStr = String(p.fecha || '');
+                const fechaPedido = fechaPedidoStr.split(' ')[0];
+                fechaMatch = fechaPedido === this.filtros.fecha;
+            }
+            
+            return estadoMatch && pagoMatch && fechaMatch;
         });
     }
 

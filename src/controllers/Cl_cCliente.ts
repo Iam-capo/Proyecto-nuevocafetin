@@ -89,12 +89,17 @@ public eliminarDelCarrito(codigo: string) {
             detallesPago = desc;
         }
 
+        const ahora = new Date();
+        const fecha = ahora.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+        const hora = ahora.toTimeString().split(' ')[0]; // Formato HH:MM:SS
+        
         const pedido = {
             NomCliente: nomCliente,
             Items: this.carrito.getItemsParaEnvio(),
             Total: this.carrito.calcularTotal(),
             MetodoPago: metodoPago,
             DetallesPago: detallesPago,
+            Fecha: `${fecha} ${hora}`,
             estado: "Pendiente"
         };
 

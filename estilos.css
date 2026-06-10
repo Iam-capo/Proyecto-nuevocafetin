@@ -1,8 +1,8 @@
+
+
 body {
-    /* La ruta debe apuntar a donde guardaste la imagen */
-    background-image: url('img/comida.jpg');
-    
-    /* Configuración para que cubra toda la pantalla */
+
+    background-image: url('img/OIP.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -14,13 +14,14 @@ body {
     background-color: rgba(255, 255, 255, 0.4); 
 }
 
- body { background-color: #fdfaf6; font-family: 'Segoe UI', sans-serif; }
+
+    body { background-color: #ffffff00; font-family: 'Segoe UI', sans-serif; }
     .card { border-radius: 25px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     .card-header { background: transparent; border: none; font-size: 1.2rem; font-weight: bold; }
     /* Contenedor de producto */
    
-    .prod-card {
-        background: #fff;
+    .card, .prod-card {
+        background: #000000;
         border-radius: 20px;
         border: 1px solid #eee;
         text-align: center;
@@ -32,14 +33,14 @@ body {
     .qty-btn {
         width: 35px; height: 35px;
         border-radius: 50%;
-        border: 1px solid #ccc;
+        border: 1px solid #000000;
         background: #fff;
         font-weight: bold;
     }
     
     /* Botón Enviar Final */
     .btn-enviar-final {
-        background: #e9ecef;
+        background: #000000;
         border-radius: 30px;
         border: 2px solid #000;
         font-weight: bold;
@@ -94,7 +95,7 @@ body {
         align-items: center;
     }
     
-    .btn-qty:hover { background: #d0f0e0; }
+    .btn-qty:hover { background: #c2c9ed; }
 
     
 
@@ -111,37 +112,38 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(to right, #0080ff, #00c6ff);
+    background-color: rgba(2, 151, 192, 0.8);;
     font-weight: bold;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(to right, #00c6ff, #0080ff);
+    background-color: rgb(3, 121, 181);
 }
 
 .btn-danger {
-    background: linear-gradient(to right, #ff0000, #ff8000);
+    background-color: rgba(192, 2, 2, 0.899);
     font-weight: bold;
 }
 
 .btn-danger:hover {
-    background: linear-gradient(to right, #ff8000, #ff0000);
+    background-color: rgb(114, 0, 0);
 }
 
 .btn-warning {
-    background: linear-gradient(to right, #ffff00, #ffff80);
+    background-color: rgb(235, 235, 37);
     font-weight: bold;
 }
 
 .btn-warning:hover {
-    background: linear-gradient(to right, #ffff80, #ffff00);
+    background-color: rgb(222, 222, 9);
 }
 
 .btn-success {
-    background: linear-gradient(to right, #00ff00, #00ff80);
+    background-color: rgb(28, 148, 28);
     font-weight: bold;
 }
 
 .btn-success:hover {
-    background: linear-gradient(to right, #00ff80, #00ff00);
+    background-color: rgba(17, 107, 14, 0.901);
 }
+

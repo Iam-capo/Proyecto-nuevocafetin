@@ -4,15 +4,17 @@ export default class Cl_mPedido {
     private _items: { codigo: string; nombre: string; precio: number; cantidad: number }[] = [];
     private _metodoPago: string = "";
     private _detallesPago: string = "";
+    private _fecha: number = 0;
     private _estado: string = "Pendiente";
 
-    constructor({ id, nomCliente, items, metodoPago, detallesPago, estado }: 
-                { id?: string; nomCliente: string; items: any[]; metodoPago: string; detallesPago: string; estado?: string }) {
+    constructor({ id, nomCliente, items, metodoPago, detallesPago, fecha, estado }: 
+                { id?: string; nomCliente: string; items: any[]; metodoPago: string; detallesPago: string; fecha: number; estado?: string }) {
         this._id = id;
         this.nomCliente = nomCliente;
         this.items = items;
         this.metodoPago = metodoPago;
         this.detallesPago = detallesPago;
+        this.fecha = fecha;
         if (estado) this.estado = estado;
     }
 
@@ -25,6 +27,8 @@ export default class Cl_mPedido {
     get metodoPago(): string { return this._metodoPago; }
     set detallesPago(value: string) { this._detallesPago = value; }
     get detallesPago(): string { return this._detallesPago; }
+    set fecha(value: number) { this._fecha = value; }
+    get fecha(): number { return this._fecha; }
     set estado(value: string) { this._estado = value; }
     get estado(): string { return this._estado; }
 
@@ -43,6 +47,7 @@ export default class Cl_mPedido {
             Total: this.total,
             MetodoPago: this.metodoPago,
             DetallesPago: this.detallesPago,
+            fecha: this.fecha,
             estado: this.estado
         };
     }

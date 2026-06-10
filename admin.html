@@ -10,8 +10,8 @@
 <body class="bg-light">
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Panel de Administración</h1>
-        <button class="btn btn-outline-secondary" onclick="location.href='index.html'">Ir a Cliente</button>
+        <h1 class="h3 text-center p-3 mb-4">Panel de Administración</h1>
+        <button class="btn btn-outline-secondary" onclick="location.href='index.html'">Ir a Cliente</button><br>
     </div>
 
     <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
@@ -41,12 +41,16 @@
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
+                    <div class="col-md-6">
+                        <label>Filtrar por fecha</label>
+                        <input type="date" id="inFiltroFecha" class="form-control" placeholder="dd/mm/aaaa">
+                    </div>
                 </div>
             </div>
             <div class="card shadow-sm">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light"><tr><th>ID</th><th>Cliente</th><th>Productos</th><th>Cantidad</th><th>Total</th><th>Método pago</th><th>Detalle</th><th>Estado</th><th>Acción</th></thead>
+                        <thead class="table-light"><tr><th>ID</th><th>Cliente</th><th>Productos</th><th>Cantidad</th><th>Total</th><th>Método pago</th><th>Detalle</th><th>Fecha</th><th>Estado</th><th>Acción</th></thead>
                         <tbody id="tablaPedidos"></tbody>
                     </table>
                 </div>
@@ -88,7 +92,7 @@
             <div class="card shadow-sm">
                 <div class="table-responsive">
                     <table class="table table-sm align-middle">
-                        <thead class="table-light"><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Acciones</th></thead>
+                        <thead class="table-light"><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Porcentaje del</th><th>Acciones</th></thead>
                         <tbody id="tablaProductos"></tbody>
                     </table>
                 </div>

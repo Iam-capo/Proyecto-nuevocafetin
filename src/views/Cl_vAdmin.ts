@@ -11,6 +11,7 @@ export default class Cl_vAdmin implements I_vAdmin {
     private procesarCallback?: (id: string) => void;
     private cancelarCallback?: (id: string) => void;
     private filtrarCallback?: (filtros: any) => void;
+    private filtroFecha: HTMLInputElement;
     private guardarProductoCallback?: (producto: any) => void;
     private eliminarProductoCallback?: (id: string) => void;
     private modalEl: HTMLElement | null;
@@ -21,14 +22,16 @@ export default class Cl_vAdmin implements I_vAdmin {
         this.tablaPedidos = document.getElementById("tablaPedidos") as HTMLTableSectionElement;
         this.filtroEstado = document.getElementById("inFiltroEstado") as HTMLSelectElement;
         this.filtroMetodoPago = document.getElementById("inFiltroMetodoPago") as HTMLSelectElement;
+        this.filtroFecha = document.getElementById("inFiltroFecha") as HTMLInputElement;
         this.tablaProductos = document.getElementById("tablaProductos") as HTMLTableSectionElement;
         this.formProducto = document.getElementById("formProducto") as HTMLFormElement;
         this.btnGuardarProducto = document.getElementById("btnGuardarProducto") as HTMLButtonElement;
         this.modalEl = document.getElementById("adminAlertModal");
         this.modalBody = document.getElementById("adminAlertModalBody");
 
-        this.filtroEstado.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value });
-        this.filtroMetodoPago.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value });
+        this.filtroEstado.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
+        this.filtroMetodoPago.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
+        this.filtroFecha.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
         this.formProducto.onsubmit = (e) => { e.preventDefault(); this.guardarProducto(); };
         this.btnGuardarProducto.onclick = () => this.guardarProducto();
 
@@ -58,6 +61,7 @@ export default class Cl_vAdmin implements I_vAdmin {
                 <td>$${pedido.total().toFixed(2)}</td>
                 <td>${pedido.metodoPago}</td>
                 <td>${pedido.detallesPago || '—'}</td>
+                <td>${pedido.fecha || '—'}</td>
                 <td class="${pedido.estado.toLowerCase()}">${pedido.estado}</td>
                 <td><button class="btn btn-sm btn-success btn-procesar" data-id="${pedido.id}" ${pedido.estado !== 'Pendiente' ? 'disabled' : ''}>Procesar</button><button class="btn btn-sm btn-danger btn-cancelar" data-id="${pedido.id}" ${pedido.estado !== 'Pendiente' ? 'disabled' : ''}>Cancelar</button></td>
             `;
@@ -77,6 +81,7 @@ export default class Cl_vAdmin implements I_vAdmin {
                 <td>${prod.nombre}</td>
                 <td>${prod.categoria}</td>
                 <td>$${prod.precio.toFixed(2)}</td>
+                <td>${prod.popularidad}%</td>
                 <td>
                     <button class="btn btn-sm btn-warning btn-editar" data-id="${prod.id}">Editar</button>
                     <button class="btn btn-sm btn-danger btn-eliminar" data-id="${prod.id}">Eliminar</button>

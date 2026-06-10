@@ -9,6 +9,7 @@ export default class Cl_vAdmin {
     procesarCallback;
     cancelarCallback;
     filtrarCallback;
+    filtroFecha;
     guardarProductoCallback;
     eliminarProductoCallback;
     modalEl;
@@ -18,13 +19,15 @@ export default class Cl_vAdmin {
         this.tablaPedidos = document.getElementById("tablaPedidos");
         this.filtroEstado = document.getElementById("inFiltroEstado");
         this.filtroMetodoPago = document.getElementById("inFiltroMetodoPago");
+        this.filtroFecha = document.getElementById("inFiltroFecha");
         this.tablaProductos = document.getElementById("tablaProductos");
         this.formProducto = document.getElementById("formProducto");
         this.btnGuardarProducto = document.getElementById("btnGuardarProducto");
         this.modalEl = document.getElementById("adminAlertModal");
         this.modalBody = document.getElementById("adminAlertModalBody");
-        this.filtroEstado.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value });
-        this.filtroMetodoPago.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value });
+        this.filtroEstado.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
+        this.filtroMetodoPago.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
+        this.filtroFecha.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
         this.formProducto.onsubmit = (e) => { e.preventDefault(); this.guardarProducto(); };
         this.btnGuardarProducto.onclick = () => this.guardarProducto();
         if (this.modalEl && window.bootstrap) {
@@ -51,6 +54,7 @@ export default class Cl_vAdmin {
                 <td>$${pedido.total().toFixed(2)}</td>
                 <td>${pedido.metodoPago}</td>
                 <td>${pedido.detallesPago || '—'}</td>
+                <td>${pedido.fecha || '—'}</td>
                 <td class="${pedido.estado.toLowerCase()}">${pedido.estado}</td>
                 <td><button class="btn btn-sm btn-success btn-procesar" data-id="${pedido.id}" ${pedido.estado !== 'Pendiente' ? 'disabled' : ''}>Procesar</button><button class="btn btn-sm btn-danger btn-cancelar" data-id="${pedido.id}" ${pedido.estado !== 'Pendiente' ? 'disabled' : ''}>Cancelar</button></td>
             `;
@@ -69,6 +73,7 @@ export default class Cl_vAdmin {
                 <td>${prod.nombre}</td>
                 <td>${prod.categoria}</td>
                 <td>$${prod.precio.toFixed(2)}</td>
+                <td>${prod.popularidad}%</td>
                 <td>
                     <button class="btn btn-sm btn-warning btn-editar" data-id="${prod.id}">Editar</button>
                     <button class="btn btn-sm btn-danger btn-eliminar" data-id="${prod.id}">Eliminar</button>
