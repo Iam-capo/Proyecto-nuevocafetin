@@ -12,9 +12,14 @@ export default class Cl_vCliente implements I_vCliente {
     private inDescOtro: HTMLInputElement;
     private btEnviar: HTMLButtonElement;
     private alertContainer: HTMLElement;
+    private inBuscar: HTMLInputElement;
+    private selectCategoria: HTMLSelectElement;
     private agregarCallback?: (codigo: string, cantidad: number) => void;
     private eliminarCallback?: (codigo: string) => void;
     private enviarCallback?: () => void;
+    private buscarCallback?: (texto: string) => void;
+    private cambiarCategoriaCallback?: (categoria: string) => void;
+    private cantidades: Map<string, number> = new Map();
 
     constructor() {
         this.inNomCliente = document.getElementById("inNomCliente") as HTMLInputElement;
@@ -28,9 +33,15 @@ export default class Cl_vCliente implements I_vCliente {
         this.inDescOtro = document.getElementById("descOtro") as HTMLInputElement;
         this.btEnviar = document.getElementById("btEnviar") as HTMLButtonElement;
         this.alertContainer = document.getElementById("clienteAlertContainer") as HTMLElement;
+        this.inBuscar = document.getElementById("inBuscar") as HTMLInputElement;
+        this.selectCategoria = document.getElementById("selectCategoria") as HTMLSelectElement;
 
         this.selectMetodoPago.addEventListener("change", () => this.cambiarMetodoPago());
         this.btEnviar.onclick = () => this.enviarCallback?.();
+        
+        this.inBuscar.addEventListener("input", () => this.buscarCallback?.(this.inBuscar.value));
+        this.selectCategoria.addEventListener("change", () => this.cambiarCategoriaCallback?.(this.selectCategoria.value));
+
         this.cambiarMetodoPago();
     }
 
@@ -62,6 +73,7 @@ export default class Cl_vCliente implements I_vCliente {
         productos.forEach(prod => {
             const div = document.createElement("div");
             div.className = "col-md-3 mb-4";
+            let cantidad = this.cantidades.get(prod.codigo) || 0;
             div.innerHTML = `
                 <div class="card-prod shadow-sm">
                     <img src="img/${prod.imagen}" class="img-fluid mb-2" style="height: 80px;">
@@ -69,7 +81,7 @@ export default class Cl_vCliente implements I_vCliente {
                     <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
                     <div class="control-cantidad">
                         <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
-                        <span id="cant-${prod.codigo}" class="fs-5">0</span>
+                        <span id="cant-${prod.codigo}" class="fs-5">${cantidad}</span>
                         <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
                     </div>
                 </div>
@@ -81,10 +93,10 @@ export default class Cl_vCliente implements I_vCliente {
             };
 
             const display = div.querySelector(`#cant-${prod.codigo}`) as HTMLElement;
-            let cantidad = 0;
 
             div.querySelector(".btn-plus")!.addEventListener("click", () => {
                 cantidad++;
+                this.cantidades.set(prod.codigo, cantidad);
                 display.textContent = cantidad.toString();
                 // Notificamos al controlador el cambio inmediato
                 this.agregarCallback?.(prod.codigo, 1); 
@@ -93,6 +105,7 @@ export default class Cl_vCliente implements I_vCliente {
             div.querySelector(".btn-minus")!.addEventListener("click", () => {
                 if (cantidad > 0) {
                     cantidad--;
+                    this.cantidades.set(prod.codigo, cantidad);
                     display.textContent = cantidad.toString();
                     // Notificamos para restar al carrito (cantidad negativa)
                     this.agregarCallback?.(prod.codigo, -1);
@@ -136,16 +149,35 @@ export default class Cl_vCliente implements I_vCliente {
         this.selectMetodoPago.value = "";
         this.inRefPago.value = "";
         this.inDescOtro.value = "";
+        this.inBuscar.value = "";
+        this.selectCategoria.value = "Todas";
+        this.cantidades.clear();
         this.cambiarMetodoPago();
     }
 
-    // Agrega este método a tu clase Cl_vCliente
-resetContador(codigo: string): void {
-    const span = document.getElementById(`cant-${codigo}`) as HTMLElement;
-    if (span) {
-        span.textContent = "0";
-        // También debemos resetear la variable local si la tienes guardada
-        // En este diseño, el span es nuestra fuente de verdad visual
+    resetContador(codigo: string): void {
+        const span = document.getElementById(`cant-${codigo}`) as HTMLElement;
+        if (span) {
+            span.textContent = "0";
+        }
+        this.cantidades.set(codigo, 0);
     }
-}
+
+    onBuscar(callback: (texto: string) => void): void {
+        this.buscarCallback = callback;
+    }
+
+    onCambiarCategoria(callback: (categoria: string) => void): void {
+        this.cambiarCategoriaCallback = callback;
+    }
+
+    llenarCategorias(categorias: string[]): void {
+        this.selectCategoria.innerHTML = '<option value="Todas">Todas las categorías</option>';
+        categorias.forEach(cat => {
+            const opt = document.createElement("option");
+            opt.value = cat;
+            opt.textContent = cat;
+            this.selectCategoria.appendChild(opt);
+        });
+    }
 }

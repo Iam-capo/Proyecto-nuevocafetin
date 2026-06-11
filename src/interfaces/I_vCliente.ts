@@ -12,4 +12,7 @@ export default interface I_vCliente {
     mostrarTotal(total: number): void;
     limpiar(): void;
     mostrarAlerta(tipo: "success" | "danger" | "warning", mensaje: string): void;
+    onBuscar(callback: (texto: string) => void): void;
+    onCambiarCategoria(callback: (categoria: string) => void): void;
+    llenarCategorias(categorias: string[]): void;
 }

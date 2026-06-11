@@ -4,27 +4,56 @@ import Cl_mCarrito from "../models/Cl_mCarrito.js";
 export default class Cl_cCliente {
     vista;
     productos = [];
+    productosOriginales = [];
     carrito;
+    textoBusqueda = "";
+    categoriaSeleccionada = "Todas";
     constructor(vista) {
         this.vista = vista;
         this.carrito = new Cl_mCarrito();
         this.vista.onAgregarProducto((codigo, cantidad) => this.agregarAlCarrito(codigo, cantidad));
         this.vista.onEliminarProducto((codigo) => this.eliminarDelCarrito(codigo));
         this.vista.onEnviar(() => this.enviarPedido());
+        this.vista.onBuscar((texto) => {
+            this.textoBusqueda = texto;
+            this.aplicarFiltros();
+        });
+        this.vista.onCambiarCategoria((categoria) => {
+            this.categoriaSeleccionada = categoria;
+            this.aplicarFiltros();
+        });
         this.cargarProductos();
     }
     async cargarProductos() {
         const resultado = await sProducto.obtenerTodos();
         if (resultado.ok) {
-            this.productos = resultado.data;
-            this.vista.mostrarProductos(this.productos);
+            this.productosOriginales = resultado.data;
+            this.productos = [...this.productosOriginales];
+            // Obtener categorías únicas
+            const categoriasUnicas = Array.from(new Set(this.productosOriginales.map(p => p.categoria)))
+                .filter(c => c && c.trim() !== "");
+            this.vista.llenarCategorias(categoriasUnicas);
+            this.vista.mostrarProductos(this.productosOriginales);
         }
         else {
             this.vista.mostrarAlerta("danger", "Error al cargar productos");
         }
     }
+    aplicarFiltros() {
+        let filtrados = this.productosOriginales;
+        // Búsqueda por texto (case-insensitive)
+        if (this.textoBusqueda.trim() !== "") {
+            const busqueda = this.textoBusqueda.toLowerCase();
+            filtrados = filtrados.filter(p => p.nombre.toLowerCase().includes(busqueda));
+        }
+        // Filtro por categoría
+        if (this.categoriaSeleccionada !== "Todas") {
+            filtrados = filtrados.filter(p => p.categoria === this.categoriaSeleccionada);
+        }
+        this.vista.mostrarProductos(filtrados);
+    }
     agregarAlCarrito(codigo, cantidad) {
-        const producto = this.productos.find(p => p.codigo === codigo);
+        const producto = this.productosOriginales.find(p => p.codigo === codigo);
         if (!producto)
             return;
         this.carrito.agregar(producto, cantidad);

@@ -6,7 +6,10 @@ import Cl_mCarrito from "../models/Cl_mCarrito.js";
 export default class Cl_cCliente {
     private vista: I_vCliente;
     private productos: any[] = [];
+    private productosOriginales: any[] = [];
     private carrito: Cl_mCarrito;
+    private textoBusqueda: string = "";
+    private categoriaSeleccionada: string = "Todas";
 
     constructor(vista: I_vCliente) {
         this.vista = vista;
@@ -14,29 +17,61 @@ export default class Cl_cCliente {
         this.vista.onAgregarProducto((codigo, cantidad) => this.agregarAlCarrito(codigo, cantidad));
         this.vista.onEliminarProducto((codigo) => this.eliminarDelCarrito(codigo));
         this.vista.onEnviar(() => this.enviarPedido());
+        this.vista.onBuscar((texto) => {
+            this.textoBusqueda = texto;
+            this.aplicarFiltros();
+        });
+        this.vista.onCambiarCategoria((categoria) => {
+            this.categoriaSeleccionada = categoria;
+            this.aplicarFiltros();
+        });
         this.cargarProductos();
     }
 
     async cargarProductos() {
         const resultado = await sProducto.obtenerTodos();
         if (resultado.ok) {
-            this.productos = resultado.data;
-            this.vista.mostrarProductos(this.productos);
+            this.productosOriginales = resultado.data;
+            this.productos = [...this.productosOriginales];
+            
+            // Obtener categorías únicas
+            const categoriasUnicas = Array.from(new Set(this.productosOriginales.map(p => p.categoria)))
+                .filter(c => c && c.trim() !== "");
+            
+            this.vista.llenarCategorias(categoriasUnicas);
+            this.vista.mostrarProductos(this.productosOriginales);
         } else {
             this.vista.mostrarAlerta("danger", "Error al cargar productos");
         }
     }
 
+    public aplicarFiltros() {
+        let filtrados = this.productosOriginales;
+
+        // Búsqueda por texto (case-insensitive)
+        if (this.textoBusqueda.trim() !== "") {
+            const busqueda = this.textoBusqueda.toLowerCase();
+            filtrados = filtrados.filter(p => p.nombre.toLowerCase().includes(busqueda));
+        }
+
+        // Filtro por categoría
+        if (this.categoriaSeleccionada !== "Todas") {
+            filtrados = filtrados.filter(p => p.categoria === this.categoriaSeleccionada);
+        }
+
+        this.vista.mostrarProductos(filtrados);
+    }
+
     public agregarAlCarrito(codigo: string, cantidad: number) {
-    const producto = this.productos.find(p => p.codigo === codigo);
-    if (!producto) return;
-    
-    this.carrito.agregar(producto, cantidad);
-    
-    // Actualizar vista del carrito y total inmediatamente
-    this.vista.mostrarCarrito(this.carrito.getItems());
-    this.vista.mostrarTotal(this.carrito.calcularTotal());
-}
+        const producto = this.productosOriginales.find(p => p.codigo === codigo);
+        if (!producto) return;
+        
+        this.carrito.agregar(producto, cantidad);
+        
+        // Actualizar vista del carrito y total inmediatamente
+        this.vista.mostrarCarrito(this.carrito.getItems());
+        this.vista.mostrarTotal(this.carrito.calcularTotal());
+    }
 
     // En tu método eliminarDelCarrito en Cl_cCliente.ts
 public eliminarDelCarrito(codigo: string) {

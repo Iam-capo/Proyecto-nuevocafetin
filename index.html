@@ -29,6 +29,24 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white fw-bold">Nuestros Productos</div>
                 <div class="card-body">
+                    <!-- Buscador y Filtros -->
+                    <div class="row g-3 mb-4 align-items-center">
+                        <div class="col-md-7">
+                            <div class="input-group mb-0">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search text-muted" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                    </svg>
+                                </span>
+                                <input type="text" id="inBuscar" class="form-control border-start-0 ps-0" placeholder="Buscar productos por nombre...">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <select id="selectCategoria" class="form-select">
+                                <option value="Todas">Todas las categorías</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="row" id="listaProductos"></div>
                 </div>
             </div>
