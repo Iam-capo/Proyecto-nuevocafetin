@@ -1,6 +1,7 @@
 import sPedido from "../services/Cl_sPedido.js";
 import sProducto from "../services/Cl_sProducto.js";
 import Cl_mCarrito from "../models/Cl_mCarrito.js";
+import Cl_sDolar from "../services/Cl_sDolar.js";
 export default class Cl_cCliente {
     vista;
     productos = [];
@@ -8,6 +9,7 @@ export default class Cl_cCliente {
     carrito;
     textoBusqueda = "";
     categoriaSeleccionada = "Todas";
+    tasa = 40.0;
     constructor(vista) {
         this.vista = vista;
         this.carrito = new Cl_mCarrito();
@@ -25,6 +27,8 @@ export default class Cl_cCliente {
         this.cargarProductos();
     }
     async cargarProductos() {
+        this.tasa = await Cl_sDolar.obtenerTasa();
+        this.vista.setTasa(this.tasa);
         const resultado = await sProducto.obtenerTodos();
         if (resultado.ok) {
             this.productosOriginales = resultado.data;
@@ -82,6 +86,25 @@ export default class Cl_cCliente {
             this.vista.mostrarAlerta("danger", "Ingrese su nombre");
             return;
         }
+        const cedula = this.vista.cedula;
+        if (!cedula.trim()) {
+            this.vista.mostrarAlerta("danger", "Ingrese su cédula");
+            return;
+        }
+        // Validar unicidad de cédula (un número de cédula debe pertenecer al mismo nombre de cliente)
+        const resPedidos = await sPedido.obtenerTodos();
+        if (resPedidos.ok) {
+            const yaExisteDiferente = resPedidos.data.some(p => {
+                const ced = p.Cedula || p.cedula || "";
+                const nom = p.NomCliente || p.nomCliente || "";
+                return ced.trim().toLowerCase() === cedula.trim().toLowerCase() &&
+                    nom.trim().toLowerCase() !== nomCliente.trim().toLowerCase();
+            });
+            if (yaExisteDiferente) {
+                this.vista.mostrarAlerta("danger", "La cédula ya está registrada a nombre de otro cliente");
+                return;
+            }
+        }
         if (this.carrito.estaVacio()) {
             this.vista.mostrarAlerta("warning", "Agregue al menos un producto");
             return;
@@ -111,10 +134,21 @@ export default class Cl_cCliente {
         const ahora = new Date();
         const fecha = ahora.toISOString().split('T')[0]; // Formato YYYY-MM-DD
         const hora = ahora.toTimeString().split(' ')[0]; // Formato HH:MM:SS
+        const esBolivares = metodoPago === "Efectivo Bs." || metodoPago === "Pago Móvil" || metodoPago === "Efectivo BS";
+        let itemsParaEnvio = this.carrito.getItemsParaEnvio();
+        let total = this.carrito.calcularTotal();
+        if (esBolivares) {
+            itemsParaEnvio = itemsParaEnvio.map((item) => ({
+                ...item,
+                precio: item.precio * this.tasa
+            }));
+            total = total * this.tasa;
+        }
         const pedido = {
             NomCliente: nomCliente,
-            Items: this.carrito.getItemsParaEnvio(),
-            Total: this.carrito.calcularTotal(),
+            Cedula: cedula,
+            Items: itemsParaEnvio,
+            Total: total,
             MetodoPago: metodoPago,
             DetallesPago: detallesPago,
             Fecha: `${fecha} ${hora}`,

@@ -2,6 +2,11 @@ import I_vAdmin from "../interfaces/I_vAdmin.js";
 
 export default class Cl_vAdmin implements I_vAdmin {
     private tablaPedidos: HTMLTableSectionElement;
+    private tasa: number = 40.0;
+
+    setTasa(tasa: number): void {
+        this.tasa = tasa;
+    }
     private filtroEstado: HTMLSelectElement;
     private filtroMetodoPago: HTMLSelectElement;
     private tablaProductos: HTMLTableSectionElement;
@@ -12,26 +17,59 @@ export default class Cl_vAdmin implements I_vAdmin {
     private cancelarCallback?: (id: string) => void;
     private filtrarCallback?: (filtros: any) => void;
     private filtroFecha: HTMLInputElement;
+    private filtroCedula: HTMLInputElement;
     private guardarProductoCallback?: (producto: any) => void;
     private eliminarProductoCallback?: (id: string) => void;
     private modalEl: HTMLElement | null;
     private modalInstance: any;
     private modalBody: HTMLElement | null;
 
+    private txtRecaudacionDiaria: HTMLElement;
+    private txtProductoMasVendido: HTMLElement;
+    private txtProductoMasVendidoDetalle: HTMLElement;
+    private txtProductoMayorIngreso: HTMLElement;
+    private txtProductoMayorIngresoDetalle: HTMLElement;
+    private selectAnalisisProducto: HTMLSelectElement;
+    private txtUnidadesProducto: HTMLElement;
+    private txtIngresoProducto: HTMLElement;
+    private analizarProductoCallback?: (codigo: string) => void;
+
     constructor() {
         this.tablaPedidos = document.getElementById("tablaPedidos") as HTMLTableSectionElement;
         this.filtroEstado = document.getElementById("inFiltroEstado") as HTMLSelectElement;
         this.filtroMetodoPago = document.getElementById("inFiltroMetodoPago") as HTMLSelectElement;
         this.filtroFecha = document.getElementById("inFiltroFecha") as HTMLInputElement;
+        this.filtroCedula = document.getElementById("inFiltroCedula") as HTMLInputElement;
         this.tablaProductos = document.getElementById("tablaProductos") as HTMLTableSectionElement;
         this.formProducto = document.getElementById("formProducto") as HTMLFormElement;
         this.btnGuardarProducto = document.getElementById("btnGuardarProducto") as HTMLButtonElement;
         this.modalEl = document.getElementById("adminAlertModal");
         this.modalBody = document.getElementById("adminAlertModalBody");
 
-        this.filtroEstado.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
-        this.filtroMetodoPago.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
-        this.filtroFecha.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
+        this.txtRecaudacionDiaria = document.getElementById("txtRecaudacionDiaria") as HTMLElement;
+        this.txtProductoMasVendido = document.getElementById("txtProductoMasVendido") as HTMLElement;
+        this.txtProductoMasVendidoDetalle = document.getElementById("txtProductoMasVendidoDetalle") as HTMLElement;
+        this.txtProductoMayorIngreso = document.getElementById("txtProductoMayorIngreso") as HTMLElement;
+        this.txtProductoMayorIngresoDetalle = document.getElementById("txtProductoMayorIngresoDetalle") as HTMLElement;
+        this.selectAnalisisProducto = document.getElementById("selectAnalisisProducto") as HTMLSelectElement;
+        this.txtUnidadesProducto = document.getElementById("txtUnidadesProducto") as HTMLElement;
+        this.txtIngresoProducto = document.getElementById("txtIngresoProducto") as HTMLElement;
+
+        this.selectAnalisisProducto.onchange = () => {
+            this.analizarProductoCallback?.(this.selectAnalisisProducto.value);
+        };
+
+        const triggerFiltro = () => this.filtrarCallback?.({
+            estado: this.filtroEstado.value,
+            metodoPago: this.filtroMetodoPago.value,
+            fecha: this.filtroFecha.value,
+            cedula: this.filtroCedula.value
+        });
+
+        this.filtroEstado.onchange = triggerFiltro;
+        this.filtroMetodoPago.onchange = triggerFiltro;
+        this.filtroFecha.onchange = triggerFiltro;
+        this.filtroCedula.oninput = triggerFiltro;
         this.formProducto.onsubmit = (e) => { e.preventDefault(); this.guardarProducto(); };
         this.btnGuardarProducto.onclick = () => this.guardarProducto();
 
@@ -51,14 +89,16 @@ export default class Cl_vAdmin implements I_vAdmin {
     mostrarPedidos(pedidos: any[]): void {
         this.tablaPedidos.innerHTML = "";
         pedidos.forEach(pedido => {
+            const esBs = pedido.metodoPago === "Efectivo Bs." || pedido.metodoPago === "Pago Móvil" || pedido.metodoPago === "Efectivo BS" || pedido.metodoPago === "Efectivo Bs";
+            const totalStr = esBs ? `Bs. ${pedido.total().toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `$${pedido.total().toFixed(2)}`;
             const productosHtml = pedido.items.map((i: any) => `${i.nombre} x${i.cantidad}`).join("<br>");
             const fila = this.tablaPedidos.insertRow();
             fila.innerHTML = `
                 <td>${pedido.id || ''}</td>
-                <td>${pedido.nomCliente}</td>
+                <td>${pedido.nomCliente}<br><small class="text-muted">CI: ${pedido.cedula || '—'}</small></td>
                 <td>${productosHtml}</td>
                 <td>${pedido.cantidadTotal()}</td>
-                <td>$${pedido.total().toFixed(2)}</td>
+                <td>${totalStr}</td>
                 <td>${pedido.metodoPago}</td>
                 <td>${pedido.detallesPago || '—'}</td>
                 <td>${pedido.fecha || '—'}</td>
@@ -76,12 +116,13 @@ export default class Cl_vAdmin implements I_vAdmin {
         this.tablaProductos.innerHTML = "";
         productos.forEach(prod => {
             const fila = this.tablaProductos.insertRow();
+            const popStr = !prod.popularidad || prod.popularidad === "0.00" || prod.popularidad === "0" || prod.popularidad === "—" ? "—" : `${prod.popularidad}%`;
             fila.innerHTML = `
                 <td>${prod.codigo}</td>
                 <td>${prod.nombre}</td>
                 <td>${prod.categoria}</td>
                 <td>$${prod.precio.toFixed(2)}</td>
-                <td>${prod.popularidad}%</td>
+                <td>${popStr}</td>
                 <td>
                     <button class="btn btn-sm btn-warning btn-editar" data-id="${prod.id}">Editar</button>
                     <button class="btn btn-sm btn-danger btn-eliminar" data-id="${prod.id}">Eliminar</button>
@@ -139,5 +180,57 @@ export default class Cl_vAdmin implements I_vAdmin {
         this.modalBody.innerHTML = `<div class="text-${tipo}">${mensaje}</div>`;
         this.modalInstance.show();
         setTimeout(() => this.modalInstance.hide(), 1500);
+    }
+
+    mostrarReportes(datos: { 
+        recaudacionDiariaUSD: number; 
+        recaudacionDiariaBS: number; 
+        masVendido: { nombre: string; cantidad: number } | null; 
+        mayorIngreso: { nombre: string; totalUSD: number; totalBS: number } | null; 
+    }): void {
+        const usdFormateado = datos.recaudacionDiariaUSD.toFixed(2);
+        const bsFormateado = datos.recaudacionDiariaBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.txtRecaudacionDiaria.innerHTML = `$${usdFormateado} <span style="font-size: 0.6em; font-weight: normal; display: block;">Bs. ${bsFormateado}</span>`;
+        
+        if (datos.masVendido) {
+            this.txtProductoMasVendido.textContent = datos.masVendido.nombre;
+            this.txtProductoMasVendidoDetalle.textContent = `${datos.masVendido.cantidad} unidades`;
+        } else {
+            this.txtProductoMasVendido.textContent = "—";
+            this.txtProductoMasVendidoDetalle.textContent = "0 unidades";
+        }
+
+        if (datos.mayorIngreso) {
+            this.txtProductoMayorIngreso.textContent = datos.mayorIngreso.nombre;
+            const mayorUSDFormateado = datos.mayorIngreso.totalUSD.toFixed(2);
+            const mayorBSFormateado = datos.mayorIngreso.totalBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            this.txtProductoMayorIngresoDetalle.innerHTML = `$${mayorUSDFormateado} USD<br>Bs. ${mayorBSFormateado} BS`;
+        } else {
+            this.txtProductoMayorIngreso.textContent = "—";
+            this.txtProductoMayorIngresoDetalle.textContent = "$0.00 USD / Bs. 0,00 BS";
+        }
+    }
+
+    llenarSelectorProductosAnalisis(productos: any[]): void {
+        const currentVal = this.selectAnalisisProducto.value;
+        this.selectAnalisisProducto.innerHTML = '<option value="">Seleccione un producto...</option>';
+        productos.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.codigo;
+            opt.textContent = `${p.nombre} (${p.codigo})`;
+            this.selectAnalisisProducto.appendChild(opt);
+        });
+        this.selectAnalisisProducto.value = currentVal;
+    }
+
+    onAnalizarProducto(callback: (codigo: string) => void): void {
+        this.analizarProductoCallback = callback;
+    }
+
+    mostrarAnalisisProducto(unidades: number, ingresosUSD: number, ingresosBS: number): void {
+        this.txtUnidadesProducto.textContent = unidades.toString();
+        const ingUSDFormateado = ingresosUSD.toFixed(2);
+        const ingBSFormateado = ingresosBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.txtIngresoProducto.innerHTML = `$${ingUSDFormateado} USD<br><span class="fs-6 text-success" style="font-weight: normal;">Bs. ${ingBSFormateado} BS</span>`;
     }
 }

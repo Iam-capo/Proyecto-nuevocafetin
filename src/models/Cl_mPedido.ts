@@ -1,16 +1,18 @@
 export default class Cl_mPedido {
     private _id?: string;
     private _nomCliente: string = "";
+    private _cedula: string = "";
     private _items: { codigo: string; nombre: string; precio: number; cantidad: number }[] = [];
     private _metodoPago: string = "";
     private _detallesPago: string = "";
     private _fecha: number = 0;
     private _estado: string = "Pendiente";
 
-    constructor({ id, nomCliente, items, metodoPago, detallesPago, fecha, estado }: 
-                { id?: string; nomCliente: string; items: any[]; metodoPago: string; detallesPago: string; fecha: number; estado?: string }) {
+    constructor({ id, nomCliente, cedula, items, metodoPago, detallesPago, fecha, estado }: 
+                { id?: string; nomCliente: string; cedula: string; items: any[]; metodoPago: string; detallesPago: string; fecha: number; estado?: string }) {
         this._id = id;
         this.nomCliente = nomCliente;
+        this.cedula = cedula;
         this.items = items;
         this.metodoPago = metodoPago;
         this.detallesPago = detallesPago;
@@ -21,6 +23,8 @@ export default class Cl_mPedido {
     get id(): string | undefined { return this._id; }
     set nomCliente(value: string) { this._nomCliente = value; }
     get nomCliente(): string { return this._nomCliente; }
+    set cedula(value: string) {if (!value || value.trim() === "") {throw new Error("La cédula es obligatoria");}this._cedula = value.trim(); }
+    get cedula(): string { return this._cedula; }
     set items(value: any[]) { this._items = value ?? []; }
     get items(): any[] { return this._items; }
     set metodoPago(value: string) { this._metodoPago = value; }
@@ -43,6 +47,7 @@ export default class Cl_mPedido {
     toJSON() {
         return {
             NomCliente: this.nomCliente,
+            Cedula: this.cedula,
             Items: this.items,
             Total: this.total,
             MetodoPago: this.metodoPago,

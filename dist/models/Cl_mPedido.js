@@ -1,14 +1,16 @@
 export default class Cl_mPedido {
     _id;
     _nomCliente = "";
+    _cedula = "";
     _items = [];
     _metodoPago = "";
     _detallesPago = "";
     _fecha = 0;
     _estado = "Pendiente";
-    constructor({ id, nomCliente, items, metodoPago, detallesPago, fecha, estado }) {
+    constructor({ id, nomCliente, cedula, items, metodoPago, detallesPago, fecha, estado }) {
         this._id = id;
         this.nomCliente = nomCliente;
+        this.cedula = cedula;
         this.items = items;
         this.metodoPago = metodoPago;
         this.detallesPago = detallesPago;
@@ -19,6 +21,10 @@ export default class Cl_mPedido {
     get id() { return this._id; }
     set nomCliente(value) { this._nomCliente = value; }
     get nomCliente() { return this._nomCliente; }
+    set cedula(value) { if (!value || value.trim() === "") {
+        throw new Error("La cédula es obligatoria");
+    } this._cedula = value.trim(); }
+    get cedula() { return this._cedula; }
     set items(value) { this._items = value ?? []; }
     get items() { return this._items; }
     set metodoPago(value) { this._metodoPago = value; }
@@ -38,6 +44,7 @@ export default class Cl_mPedido {
     toJSON() {
         return {
             NomCliente: this.nomCliente,
+            Cedula: this.cedula,
             Items: this.items,
             Total: this.total,
             MetodoPago: this.metodoPago,

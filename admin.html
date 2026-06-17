@@ -20,6 +20,7 @@
     <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pedidos">Pedidos</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#productos">Productos</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reportes">Análisis y Reportes</button></li>
     </ul>
 
     <div class="tab-content">
@@ -47,6 +48,10 @@
                     <div class="col-md-6">
                         <label>Filtrar por fecha</label>
                         <input type="date" id="inFiltroFecha" class="form-control" placeholder="dd/mm/aaaa">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Buscar por cédula</label>
+                        <input type="text" id="inFiltroCedula" class="form-control" placeholder="Número de cédula...">
                     </div>
                 </div>
             </div>
@@ -98,6 +103,64 @@
                         <thead class="table-light"><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Porcentaje del</th><th>Acciones</th></thead>
                         <tbody id="tablaProductos"></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="reportes">
+            <!-- Recaudación Diaria -->
+            <div class="row mb-4 g-3">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm border-0 bg-success text-white">
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <h6 class="text-uppercase mb-2 text-white-50" style="font-size: 0.8rem; letter-spacing: 1px;">Recaudación Diaria (Hoy)</h6>
+                            <h3 class="mb-0 fw-bold" id="txtRecaudacionDiaria">$0.00</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm border-0 bg-primary text-white">
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <h6 class="text-uppercase mb-2 text-white-50" style="font-size: 0.8rem; letter-spacing: 1px;">Producto Más Vendido</h6>
+                            <h4 class="mb-1 fw-bold" id="txtProductoMasVendido">—</h4>
+                            <small id="txtProductoMasVendidoDetalle" class="text-white-50">—</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm border-0 bg-warning text-dark">
+                        <div class="card-body d-flex flex-column justify-content-center">
+                            <h6 class="text-uppercase mb-2 text-dark-50" style="font-size: 0.8rem; letter-spacing: 1px;">Mayor Ingreso Generado</h6>
+                            <h4 class="mb-1 fw-bold" id="txtProductoMayorIngreso">—</h4>
+                            <small id="txtProductoMayorIngresoDetalle" class="text-dark-50">—</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis de Producto Individual -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">Análisis de Producto Individual</div>
+                <div class="card-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Seleccionar Producto</label>
+                        <select id="selectAnalisisProducto" class="form-select">
+                            <option value="">Seleccione un producto...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="p-3 bg-light rounded w-100 d-flex justify-content-around">
+                            <div class="text-center">
+                                <span class="text-muted d-block" style="font-size: 0.85rem;">Unidades Vendidas</span>
+                                <strong class="fs-4" id="txtUnidadesProducto">0</strong>
+                            </div>
+                            <div class="border-end"></div>
+                            <div class="text-center">
+                                <span class="text-muted d-block" style="font-size: 0.85rem;">Ingreso Total</span>
+                                <strong class="fs-4 text-success" id="txtIngresoProducto">$0.00</strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

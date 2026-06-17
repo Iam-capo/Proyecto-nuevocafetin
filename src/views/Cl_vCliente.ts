@@ -2,6 +2,7 @@ import I_vCliente from "../interfaces/I_vCliente.js";
 
 export default class Cl_vCliente implements I_vCliente {
     private inNomCliente: HTMLInputElement;
+    private inCedCliente: HTMLInputElement;
     private divProductos: HTMLElement;
     private tablaCarrito: HTMLTableSectionElement;
     private spTotalPedido: HTMLSpanElement;
@@ -20,9 +21,15 @@ export default class Cl_vCliente implements I_vCliente {
     private buscarCallback?: (texto: string) => void;
     private cambiarCategoriaCallback?: (categoria: string) => void;
     private cantidades: Map<string, number> = new Map();
+    private tasa: number = 40.0;
+
+    setTasa(tasa: number): void {
+        this.tasa = tasa;
+    }
 
     constructor() {
         this.inNomCliente = document.getElementById("inNomCliente") as HTMLInputElement;
+        this.inCedCliente = document.getElementById("inCedCliente") as HTMLInputElement;
         this.divProductos = document.getElementById("listaProductos") as HTMLElement;
         this.tablaCarrito = document.getElementById("tablaCarrito") as HTMLTableSectionElement;
         this.spTotalPedido = document.getElementById("spTotalPedido") as HTMLSpanElement;
@@ -52,6 +59,7 @@ export default class Cl_vCliente implements I_vCliente {
     }
 
     get nomCliente(): string { return this.inNomCliente.value; }
+    get cedula(): string { return this.inCedCliente.value; }
     get metodoPago(): string { return this.selectMetodoPago.value; }
     get referenciaPago(): string { return this.inRefPago.value; }
     get descripcionOtro(): string { return this.inDescOtro.value; }
@@ -132,7 +140,9 @@ export default class Cl_vCliente implements I_vCliente {
     }
 
     mostrarTotal(total: number): void {
-        this.spTotalPedido.textContent = `$${total.toFixed(2)}`;
+        const totalBs = total * this.tasa;
+        const totalBsFormateado = totalBs.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.spTotalPedido.innerHTML = `$${total.toFixed(2)} <span class="d-block text-bolivares-sutil" style="font-size: 0.7em; font-weight: normal; margin-top: 2px;">Bs. ${totalBsFormateado}</span>`;
     }
 
     mostrarAlerta(tipo: "success" | "danger" | "warning", mensaje: string): void {
@@ -146,6 +156,7 @@ export default class Cl_vCliente implements I_vCliente {
 
     limpiar(): void {
         this.inNomCliente.value = "";
+        this.inCedCliente.value = "";
         this.selectMetodoPago.value = "";
         this.inRefPago.value = "";
         this.inDescOtro.value = "";

@@ -1,5 +1,6 @@
 export default class Cl_vCliente {
     inNomCliente;
+    inCedCliente;
     divProductos;
     tablaCarrito;
     spTotalPedido;
@@ -18,8 +19,13 @@ export default class Cl_vCliente {
     buscarCallback;
     cambiarCategoriaCallback;
     cantidades = new Map();
+    tasa = 40.0;
+    setTasa(tasa) {
+        this.tasa = tasa;
+    }
     constructor() {
         this.inNomCliente = document.getElementById("inNomCliente");
+        this.inCedCliente = document.getElementById("inCedCliente");
         this.divProductos = document.getElementById("listaProductos");
         this.tablaCarrito = document.getElementById("tablaCarrito");
         this.spTotalPedido = document.getElementById("spTotalPedido");
@@ -44,6 +50,7 @@ export default class Cl_vCliente {
         this.divOtro.style.display = value === "Otro" ? "block" : "none";
     }
     get nomCliente() { return this.inNomCliente.value; }
+    get cedula() { return this.inCedCliente.value; }
     get metodoPago() { return this.selectMetodoPago.value; }
     get referenciaPago() { return this.inRefPago.value; }
     get descripcionOtro() { return this.inDescOtro.value; }
@@ -113,7 +120,9 @@ export default class Cl_vCliente {
         });
     }
     mostrarTotal(total) {
-        this.spTotalPedido.textContent = `$${total.toFixed(2)}`;
+        const totalBs = total * this.tasa;
+        const totalBsFormateado = totalBs.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.spTotalPedido.innerHTML = `$${total.toFixed(2)} <span class="d-block text-bolivares-sutil" style="font-size: 0.7em; font-weight: normal; margin-top: 2px;">Bs. ${totalBsFormateado}</span>`;
     }
     mostrarAlerta(tipo, mensaje) {
         const id = `alert-${Date.now()}`;
@@ -126,6 +135,7 @@ export default class Cl_vCliente {
     }
     limpiar() {
         this.inNomCliente.value = "";
+        this.inCedCliente.value = "";
         this.selectMetodoPago.value = "";
         this.inRefPago.value = "";
         this.inDescOtro.value = "";

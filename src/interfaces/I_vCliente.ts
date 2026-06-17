@@ -1,5 +1,6 @@
 export default interface I_vCliente {
     get nomCliente(): string;
+    get cedula(): string;
     get metodoPago(): string;
     get referenciaPago(): string;
     get descripcionOtro(): string;
@@ -15,4 +16,5 @@ export default interface I_vCliente {
     onBuscar(callback: (texto: string) => void): void;
     onCambiarCategoria(callback: (categoria: string) => void): void;
     llenarCategorias(categorias: string[]): void;
+    setTasa(tasa: number): void;
 }

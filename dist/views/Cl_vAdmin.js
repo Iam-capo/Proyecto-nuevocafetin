@@ -1,5 +1,9 @@
 export default class Cl_vAdmin {
     tablaPedidos;
+    tasa = 40.0;
+    setTasa(tasa) {
+        this.tasa = tasa;
+    }
     filtroEstado;
     filtroMetodoPago;
     tablaProductos;
@@ -10,24 +14,53 @@ export default class Cl_vAdmin {
     cancelarCallback;
     filtrarCallback;
     filtroFecha;
+    filtroCedula;
     guardarProductoCallback;
     eliminarProductoCallback;
     modalEl;
     modalInstance;
     modalBody;
+    txtRecaudacionDiaria;
+    txtProductoMasVendido;
+    txtProductoMasVendidoDetalle;
+    txtProductoMayorIngreso;
+    txtProductoMayorIngresoDetalle;
+    selectAnalisisProducto;
+    txtUnidadesProducto;
+    txtIngresoProducto;
+    analizarProductoCallback;
     constructor() {
         this.tablaPedidos = document.getElementById("tablaPedidos");
         this.filtroEstado = document.getElementById("inFiltroEstado");
         this.filtroMetodoPago = document.getElementById("inFiltroMetodoPago");
         this.filtroFecha = document.getElementById("inFiltroFecha");
+        this.filtroCedula = document.getElementById("inFiltroCedula");
         this.tablaProductos = document.getElementById("tablaProductos");
         this.formProducto = document.getElementById("formProducto");
         this.btnGuardarProducto = document.getElementById("btnGuardarProducto");
         this.modalEl = document.getElementById("adminAlertModal");
         this.modalBody = document.getElementById("adminAlertModalBody");
-        this.filtroEstado.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
-        this.filtroMetodoPago.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
-        this.filtroFecha.onchange = () => this.filtrarCallback?.({ estado: this.filtroEstado.value, metodoPago: this.filtroMetodoPago.value, fecha: this.filtroFecha.value });
+        this.txtRecaudacionDiaria = document.getElementById("txtRecaudacionDiaria");
+        this.txtProductoMasVendido = document.getElementById("txtProductoMasVendido");
+        this.txtProductoMasVendidoDetalle = document.getElementById("txtProductoMasVendidoDetalle");
+        this.txtProductoMayorIngreso = document.getElementById("txtProductoMayorIngreso");
+        this.txtProductoMayorIngresoDetalle = document.getElementById("txtProductoMayorIngresoDetalle");
+        this.selectAnalisisProducto = document.getElementById("selectAnalisisProducto");
+        this.txtUnidadesProducto = document.getElementById("txtUnidadesProducto");
+        this.txtIngresoProducto = document.getElementById("txtIngresoProducto");
+        this.selectAnalisisProducto.onchange = () => {
+            this.analizarProductoCallback?.(this.selectAnalisisProducto.value);
+        };
+        const triggerFiltro = () => this.filtrarCallback?.({
+            estado: this.filtroEstado.value,
+            metodoPago: this.filtroMetodoPago.value,
+            fecha: this.filtroFecha.value,
+            cedula: this.filtroCedula.value
+        });
+        this.filtroEstado.onchange = triggerFiltro;
+        this.filtroMetodoPago.onchange = triggerFiltro;
+        this.filtroFecha.onchange = triggerFiltro;
+        this.filtroCedula.oninput = triggerFiltro;
         this.formProducto.onsubmit = (e) => { e.preventDefault(); this.guardarProducto(); };
         this.btnGuardarProducto.onclick = () => this.guardarProducto();
         if (this.modalEl && window.bootstrap) {
@@ -44,14 +77,16 @@ export default class Cl_vAdmin {
     mostrarPedidos(pedidos) {
         this.tablaPedidos.innerHTML = "";
         pedidos.forEach(pedido => {
+            const esBs = pedido.metodoPago === "Efectivo Bs." || pedido.metodoPago === "Pago Móvil" || pedido.metodoPago === "Efectivo BS" || pedido.metodoPago === "Efectivo Bs";
+            const totalStr = esBs ? `Bs. ${pedido.total().toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `$${pedido.total().toFixed(2)}`;
             const productosHtml = pedido.items.map((i) => `${i.nombre} x${i.cantidad}`).join("<br>");
             const fila = this.tablaPedidos.insertRow();
             fila.innerHTML = `
                 <td>${pedido.id || ''}</td>
-                <td>${pedido.nomCliente}</td>
+                <td>${pedido.nomCliente}<br><small class="text-muted">CI: ${pedido.cedula || '—'}</small></td>
                 <td>${productosHtml}</td>
                 <td>${pedido.cantidadTotal()}</td>
-                <td>$${pedido.total().toFixed(2)}</td>
+                <td>${totalStr}</td>
                 <td>${pedido.metodoPago}</td>
                 <td>${pedido.detallesPago || '—'}</td>
                 <td>${pedido.fecha || '—'}</td>
@@ -68,12 +103,13 @@ export default class Cl_vAdmin {
         this.tablaProductos.innerHTML = "";
         productos.forEach(prod => {
             const fila = this.tablaProductos.insertRow();
+            const popStr = !prod.popularidad || prod.popularidad === "0.00" || prod.popularidad === "0" || prod.popularidad === "—" ? "—" : `${prod.popularidad}%`;
             fila.innerHTML = `
                 <td>${prod.codigo}</td>
                 <td>${prod.nombre}</td>
                 <td>${prod.categoria}</td>
                 <td>$${prod.precio.toFixed(2)}</td>
-                <td>${prod.popularidad}%</td>
+                <td>${popStr}</td>
                 <td>
                     <button class="btn btn-sm btn-warning btn-editar" data-id="${prod.id}">Editar</button>
                     <button class="btn btn-sm btn-danger btn-eliminar" data-id="${prod.id}">Eliminar</button>
@@ -126,6 +162,49 @@ export default class Cl_vAdmin {
         this.modalBody.innerHTML = `<div class="text-${tipo}">${mensaje}</div>`;
         this.modalInstance.show();
         setTimeout(() => this.modalInstance.hide(), 1500);
+    }
+    mostrarReportes(datos) {
+        const usdFormateado = datos.recaudacionDiariaUSD.toFixed(2);
+        const bsFormateado = datos.recaudacionDiariaBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.txtRecaudacionDiaria.innerHTML = `$${usdFormateado} <span style="font-size: 0.6em; font-weight: normal; display: block;">Bs. ${bsFormateado}</span>`;
+        if (datos.masVendido) {
+            this.txtProductoMasVendido.textContent = datos.masVendido.nombre;
+            this.txtProductoMasVendidoDetalle.textContent = `${datos.masVendido.cantidad} unidades`;
+        }
+        else {
+            this.txtProductoMasVendido.textContent = "—";
+            this.txtProductoMasVendidoDetalle.textContent = "0 unidades";
+        }
+        if (datos.mayorIngreso) {
+            this.txtProductoMayorIngreso.textContent = datos.mayorIngreso.nombre;
+            const mayorUSDFormateado = datos.mayorIngreso.totalUSD.toFixed(2);
+            const mayorBSFormateado = datos.mayorIngreso.totalBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            this.txtProductoMayorIngresoDetalle.innerHTML = `$${mayorUSDFormateado} USD<br>Bs. ${mayorBSFormateado} BS`;
+        }
+        else {
+            this.txtProductoMayorIngreso.textContent = "—";
+            this.txtProductoMayorIngresoDetalle.textContent = "$0.00 USD / Bs. 0,00 BS";
+        }
+    }
+    llenarSelectorProductosAnalisis(productos) {
+        const currentVal = this.selectAnalisisProducto.value;
+        this.selectAnalisisProducto.innerHTML = '<option value="">Seleccione un producto...</option>';
+        productos.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.codigo;
+            opt.textContent = `${p.nombre} (${p.codigo})`;
+            this.selectAnalisisProducto.appendChild(opt);
+        });
+        this.selectAnalisisProducto.value = currentVal;
+    }
+    onAnalizarProducto(callback) {
+        this.analizarProductoCallback = callback;
+    }
+    mostrarAnalisisProducto(unidades, ingresosUSD, ingresosBS) {
+        this.txtUnidadesProducto.textContent = unidades.toString();
+        const ingUSDFormateado = ingresosUSD.toFixed(2);
+        const ingBSFormateado = ingresosBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.txtIngresoProducto.innerHTML = `$${ingUSDFormateado} USD<br><span class="fs-6 text-success" style="font-weight: normal;">Bs. ${ingBSFormateado} BS</span>`;
     }
 }
 //# sourceMappingURL=Cl_vAdmin.js.map
