@@ -5,15 +5,17 @@ export default class Cl_mProducto {
     private _categoria: string = "";
     private _precio: number = 0;
     private _imagen: string = "";
+    private _cantidad_disponible: number = 0;
 
-    constructor({ id, codigo, nombre, categoria, precio, imagen }: 
-                { id?: string; codigo: string; nombre: string; categoria: string; precio: number; imagen: string }) {
+    constructor({ id, codigo, nombre, categoria, precio, imagen, cantidad_disponible = 0 }: 
+                { id?: string; codigo: string; nombre: string; categoria: string; precio: number; imagen: string; cantidad_disponible?: number }) {
         this._id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.categoria = categoria;
         this.precio = precio;
         this._imagen = imagen;
+        this.cantidad_disponible = cantidad_disponible;
     }
 
     get id(): string | undefined { return this._id; }
@@ -27,6 +29,8 @@ export default class Cl_mProducto {
     get precio(): number { return this._precio; }
     set imagen(value: string) { this._imagen = value; }
     get imagen(): string { return this._imagen; }
+    set cantidad_disponible(value: number) { this._cantidad_disponible = value; }
+    get cantidad_disponible(): number { return this._cantidad_disponible; }
 
     toJSON() {
         return {
@@ -35,7 +39,8 @@ export default class Cl_mProducto {
             nombre: this.nombre,
             categoria: this.categoria,
             precio: this.precio,
-            imagen: this.imagen
+            imagen: this.imagen,
+            cantidad_disponible: this.cantidad_disponible
         };
     }
 }

@@ -15,6 +15,9 @@ export default class Cl_vCliente implements I_vCliente {
     private alertContainer: HTMLElement;
     private inBuscar: HTMLInputElement;
     private selectCategoria: HTMLSelectElement;
+    private errNomCliente: HTMLElement;
+    private errCedCliente: HTMLElement;
+    private errRefPagoMovil: HTMLElement;
     private agregarCallback?: (codigo: string, cantidad: number) => void;
     private eliminarCallback?: (codigo: string) => void;
     private enviarCallback?: () => void;
@@ -42,20 +45,168 @@ export default class Cl_vCliente implements I_vCliente {
         this.alertContainer = document.getElementById("clienteAlertContainer") as HTMLElement;
         this.inBuscar = document.getElementById("inBuscar") as HTMLInputElement;
         this.selectCategoria = document.getElementById("selectCategoria") as HTMLSelectElement;
+        this.errNomCliente = document.getElementById("errNomCliente") as HTMLElement;
+        this.errCedCliente = document.getElementById("errCedCliente") as HTMLElement;
+        this.errRefPagoMovil = document.getElementById("errRefPagoMovil") as HTMLElement;
 
-        this.selectMetodoPago.addEventListener("change", () => this.cambiarMetodoPago());
-        this.btEnviar.onclick = () => this.enviarCallback?.();
+        this.selectMetodoPago.addEventListener("change", () => {
+            this.cambiarMetodoPago();
+            this.validarFormulario(this.selectMetodoPago.value === "Pago Móvil");
+        });
+        
+        this.inNomCliente.addEventListener("input", () => {
+            this.validarNombre(true);
+            this.validarFormulario(false);
+        });
+
+        this.inCedCliente.addEventListener("input", () => {
+            this.validarCedula(true);
+            this.validarFormulario(false);
+        });
+
+        this.inRefPago.addEventListener("input", () => {
+            this.validarPagoMovil(true);
+            this.validarFormulario(false);
+        });
+
+        this.btEnviar.onclick = () => {
+            if (this.validarFormulario(true)) {
+                this.enviarCallback?.();
+            } else {
+                this.mostrarAlerta("danger", "Por favor, corrige los errores en el formulario antes de enviar.");
+            }
+        };
         
         this.inBuscar.addEventListener("input", () => this.buscarCallback?.(this.inBuscar.value));
         this.selectCategoria.addEventListener("change", () => this.cambiarCategoriaCallback?.(this.selectCategoria.value));
 
         this.cambiarMetodoPago();
+        this.validarFormulario(false);
     }
 
     cambiarMetodoPago() {
         const value = this.selectMetodoPago.value;
         this.divPagoMovil.style.display = value === "Pago Móvil" ? "block" : "none";
         this.divOtro.style.display = value === "Otro" ? "block" : "none";
+    }
+
+    validarNombre(mostrarError: boolean = true): boolean {
+        const val = this.inNomCliente.value;
+        if (!val.trim()) {
+            if (mostrarError) {
+                this.errNomCliente.textContent = "El nombre del cliente es obligatorio.";
+                this.errNomCliente.style.display = "block";
+                this.inNomCliente.classList.add("is-invalid");
+                this.inNomCliente.style.borderColor = "red";
+            }
+            return false;
+        }
+        const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!regexLetras.test(val)) {
+            if (mostrarError) {
+                this.errNomCliente.textContent = "Por favor, ingresa solo letras";
+                this.errNomCliente.style.display = "block";
+                this.inNomCliente.classList.add("is-invalid");
+                this.inNomCliente.style.borderColor = "red";
+            }
+            return false;
+        }
+        this.errNomCliente.textContent = "";
+        this.errNomCliente.style.display = "none";
+        this.inNomCliente.classList.remove("is-invalid");
+        this.inNomCliente.style.borderColor = "";
+        return true;
+    }
+
+    validarCedula(mostrarError: boolean = true): boolean {
+        const val = this.inCedCliente.value;
+        if (!val.trim()) {
+            if (mostrarError) {
+                this.errCedCliente.textContent = "La cédula del cliente es obligatoria.";
+                this.errCedCliente.style.display = "block";
+                this.inCedCliente.classList.add("is-invalid");
+                this.inCedCliente.style.borderColor = "red";
+            }
+            return false;
+        }
+        const regexNumeros = /^\d+$/;
+        if (!regexNumeros.test(val)) {
+            if (mostrarError) {
+                this.errCedCliente.textContent = "La cédula debe contener solo números.";
+                this.errCedCliente.style.display = "block";
+                this.inCedCliente.classList.add("is-invalid");
+                this.inCedCliente.style.borderColor = "red";
+            }
+            return false;
+        }
+        if (val.length < 7) {
+            if (mostrarError) {
+                this.errCedCliente.textContent = "La cédula debe tener al menos 7 dígitos";
+                this.errCedCliente.style.display = "block";
+                this.inCedCliente.classList.add("is-invalid");
+                this.inCedCliente.style.borderColor = "red";
+            }
+            return false;
+        }
+        this.errCedCliente.textContent = "";
+        this.errCedCliente.style.display = "none";
+        this.inCedCliente.classList.remove("is-invalid");
+        this.inCedCliente.style.borderColor = "";
+        return true;
+    }
+
+    validarPagoMovil(mostrarError: boolean = true): boolean {
+        if (this.selectMetodoPago.value !== "Pago Móvil") {
+            this.errRefPagoMovil.textContent = "";
+            this.errRefPagoMovil.style.display = "none";
+            this.inRefPago.classList.remove("is-invalid");
+            this.inRefPago.style.borderColor = "";
+            return true;
+        }
+        const val = this.inRefPago.value;
+        if (!val.trim()) {
+            if (mostrarError) {
+                this.errRefPagoMovil.textContent = "La referencia de Pago Móvil es obligatoria.";
+                this.errRefPagoMovil.style.display = "block";
+                this.inRefPago.classList.add("is-invalid");
+                this.inRefPago.style.borderColor = "red";
+            }
+            return false;
+        }
+        const regexNumeros = /^\d+$/;
+        if (!regexNumeros.test(val)) {
+            if (mostrarError) {
+                this.errRefPagoMovil.textContent = "La referencia debe contener solo números.";
+                this.errRefPagoMovil.style.display = "block";
+                this.inRefPago.classList.add("is-invalid");
+                this.inRefPago.style.borderColor = "red";
+            }
+            return false;
+        }
+        if (val.length <= 6) {
+            if (mostrarError) {
+                this.errRefPagoMovil.textContent = "La referencia debe tener más de 6 dígitos";
+                this.errRefPagoMovil.style.display = "block";
+                this.inRefPago.classList.add("is-invalid");
+                this.inRefPago.style.borderColor = "red";
+            }
+            return false;
+        }
+        this.errRefPagoMovil.textContent = "";
+        this.errRefPagoMovil.style.display = "none";
+        this.inRefPago.classList.remove("is-invalid");
+        this.inRefPago.style.borderColor = "";
+        return true;
+    }
+
+    validarFormulario(mostrarError: boolean = true): boolean {
+        const nomValido = this.validarNombre(mostrarError);
+        const cedValida = this.validarCedula(mostrarError);
+        const pagoMovilValido = this.validarPagoMovil(mostrarError);
+        
+        const esValido = nomValido && cedValida && pagoMovilValido;
+        this.btEnviar.disabled = !esValido;
+        return esValido;
     }
 
     get nomCliente(): string { return this.inNomCliente.value; }
@@ -82,6 +233,7 @@ export default class Cl_vCliente implements I_vCliente {
             const div = document.createElement("div");
             div.className = "col-md-3 mb-4";
             let cantidad = this.cantidades.get(prod.codigo) || 0;
+            const limit = prod.cantidad_disponible !== undefined ? prod.cantidad_disponible : 0;
             div.innerHTML = `
                 <div class="card-prod shadow-sm">
                     <img src="img/${prod.imagen}" class="img-fluid mb-2" style="height: 80px;">
@@ -103,6 +255,10 @@ export default class Cl_vCliente implements I_vCliente {
             const display = div.querySelector(`#cant-${prod.codigo}`) as HTMLElement;
 
             div.querySelector(".btn-plus")!.addEventListener("click", () => {
+                if (cantidad >= limit) {
+                    this.mostrarAlerta("warning", `Solo quedan ${limit} unidades disponibles`);
+                    return;
+                }
                 cantidad++;
                 this.cantidades.set(prod.codigo, cantidad);
                 display.textContent = cantidad.toString();
@@ -163,7 +319,24 @@ export default class Cl_vCliente implements I_vCliente {
         this.inBuscar.value = "";
         this.selectCategoria.value = "Todas";
         this.cantidades.clear();
+        
+        this.errNomCliente.textContent = "";
+        this.errNomCliente.style.display = "none";
+        this.inNomCliente.classList.remove("is-invalid");
+        this.inNomCliente.style.borderColor = "";
+
+        this.errCedCliente.textContent = "";
+        this.errCedCliente.style.display = "none";
+        this.inCedCliente.classList.remove("is-invalid");
+        this.inCedCliente.style.borderColor = "";
+
+        this.errRefPagoMovil.textContent = "";
+        this.errRefPagoMovil.style.display = "none";
+        this.inRefPago.classList.remove("is-invalid");
+        this.inRefPago.style.borderColor = "";
+
         this.cambiarMetodoPago();
+        this.validarFormulario(false);
     }
 
     resetContador(codigo: string): void {

@@ -104,11 +104,13 @@ export default class Cl_vAdmin {
         productos.forEach(prod => {
             const fila = this.tablaProductos.insertRow();
             const popStr = !prod.popularidad || prod.popularidad === "0.00" || prod.popularidad === "0" || prod.popularidad === "—" ? "—" : `${prod.popularidad}%`;
+            const cant = prod.cantidad_disponible !== undefined ? prod.cantidad_disponible : 0;
             fila.innerHTML = `
                 <td>${prod.codigo}</td>
                 <td>${prod.nombre}</td>
                 <td>${prod.categoria}</td>
                 <td>$${prod.precio.toFixed(2)}</td>
+                <td>${cant}</td>
                 <td>${popStr}</td>
                 <td>
                     <button class="btn btn-sm btn-warning btn-editar" data-id="${prod.id}">Editar</button>
@@ -126,6 +128,7 @@ export default class Cl_vAdmin {
         document.getElementById("prodNombre").value = prod.nombre;
         document.getElementById("prodCategoria").value = prod.categoria;
         document.getElementById("prodPrecio").value = prod.precio;
+        document.getElementById("prodCantidad").value = prod.cantidad_disponible !== undefined ? prod.cantidad_disponible : 0;
         document.getElementById("prodImagenNombre").value = prod.imagen;
         this.productoEditandoId = prod.id;
     }
@@ -134,6 +137,7 @@ export default class Cl_vAdmin {
         const nombre = document.getElementById("prodNombre").value.trim();
         const categoria = document.getElementById("prodCategoria").value.trim();
         const precio = parseFloat(document.getElementById("prodPrecio").value);
+        const cantidad_disponible = parseInt(document.getElementById("prodCantidad").value) || 0;
         const inputArchivo = document.getElementById("prodImagenFile");
         const file = inputArchivo.files?.[0];
         let imagen = "";
@@ -143,11 +147,11 @@ export default class Cl_vAdmin {
         else {
             imagen = document.getElementById("prodImagenNombre").value.trim();
         }
-        if (!codigo || !nombre || !categoria || isNaN(precio)) {
+        if (!codigo || !nombre || !categoria || isNaN(precio) || isNaN(cantidad_disponible)) {
             this.mostrarModal("warning", "Complete todos los campos correctamente");
             return;
         }
-        this.guardarProductoCallback?.({ id: this.productoEditandoId, codigo, nombre, categoria, precio, imagen });
+        this.guardarProductoCallback?.({ id: this.productoEditandoId, codigo, nombre, categoria, precio, cantidad_disponible, imagen });
         this.formProducto.reset();
         this.productoEditandoId = null;
     }

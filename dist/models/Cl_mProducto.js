@@ -5,13 +5,15 @@ export default class Cl_mProducto {
     _categoria = "";
     _precio = 0;
     _imagen = "";
-    constructor({ id, codigo, nombre, categoria, precio, imagen }) {
+    _cantidad_disponible = 0;
+    constructor({ id, codigo, nombre, categoria, precio, imagen, cantidad_disponible = 0 }) {
         this._id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.categoria = categoria;
         this.precio = precio;
         this._imagen = imagen;
+        this.cantidad_disponible = cantidad_disponible;
     }
     get id() { return this._id; }
     set codigo(value) { this._codigo = value; }
@@ -24,6 +26,8 @@ export default class Cl_mProducto {
     get precio() { return this._precio; }
     set imagen(value) { this._imagen = value; }
     get imagen() { return this._imagen; }
+    set cantidad_disponible(value) { this._cantidad_disponible = value; }
+    get cantidad_disponible() { return this._cantidad_disponible; }
     toJSON() {
         return {
             tabla: "producto",
@@ -31,7 +35,8 @@ export default class Cl_mProducto {
             nombre: this.nombre,
             categoria: this.categoria,
             precio: this.precio,
-            imagen: this.imagen
+            imagen: this.imagen,
+            cantidad_disponible: this.cantidad_disponible
         };
     }
 }

@@ -31,7 +31,8 @@ export default class Cl_cCliente {
         this.vista.setTasa(this.tasa);
         const resultado = await sProducto.obtenerTodos();
         if (resultado.ok) {
-            this.productosOriginales = resultado.data;
+            // Filtrar productos con cantidad_disponible > 0
+            this.productosOriginales = resultado.data.filter(p => (p.cantidad_disponible !== undefined ? p.cantidad_disponible : 0) > 0);
             this.productos = [...this.productosOriginales];
             // Obtener categorías únicas
             const categoriasUnicas = Array.from(new Set(this.productosOriginales.map(p => p.categoria)))
@@ -157,9 +158,27 @@ export default class Cl_cCliente {
         const resultado = await sPedido.agregar(pedido);
         this.vista.mostrarAlerta(resultado.ok ? "success" : "danger", resultado.mensaje);
         if (resultado.ok) {
+            // Descontar inventario
+            const resProd = await sProducto.obtenerTodos();
+            if (resProd.ok) {
+                const todosProductos = resProd.data;
+                const itemsVendidos = this.carrito.getItems();
+                for (const item of itemsVendidos) {
+                    const prodDb = todosProductos.find(p => p.codigo === item.codigo);
+                    if (prodDb && prodDb.id) {
+                        const stockActual = prodDb.cantidad_disponible !== undefined ? prodDb.cantidad_disponible : 0;
+                        const nuevoStock = Math.max(0, stockActual - item.cantidad);
+                        await sProducto.actualizar(prodDb.id, {
+                            ...prodDb,
+                            cantidad_disponible: nuevoStock
+                        });
+                    }
+                }
+            }
             this.carrito.vaciar();
             this.vista.limpiar();
             this.actualizarVistaCarrito();
+            await this.cargarProductos();
         }
     }
 }

@@ -12,6 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="./img/coffee-svgrepo-com.png" type="image/x-icon">
     <style>
    
 </style>
@@ -59,10 +60,12 @@
                     <div class="mb-3">
                         <label class="form-label">Nombre del cliente</label>
                         <input type="text" id="inNomCliente" class="form-control" placeholder="Tu nombre">
+                        <div id="errNomCliente" class="text-danger mt-1" style="display: none; font-size: 0.85em;"></div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Cédula del cliente</label>
                         <input type="text" id="inCedCliente" class="form-control" placeholder="Tu cédula">
+                        <div id="errCedCliente" class="text-danger mt-1" style="display: none; font-size: 0.85em;"></div>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm align-middle">
@@ -90,6 +93,7 @@
                     <div id="divPagoMovil" style="display:none">
                         <label class="form-label">Referencia / Nro. Teléfono</label>
                         <input type="text" id="refPagoMovil" class="form-control mb-2">
+                        <div id="errRefPagoMovil" class="text-danger mt-1 mb-2" style="display: none; font-size: 0.85em;"></div>
                     </div>
                     <div id="divOtro" style="display:none">
                         <label class="form-label">Descripción</label>
