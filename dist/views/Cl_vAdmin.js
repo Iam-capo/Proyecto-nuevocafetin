@@ -168,9 +168,12 @@ export default class Cl_vAdmin {
         setTimeout(() => this.modalInstance.hide(), 1500);
     }
     mostrarReportes(datos) {
-        const usdFormateado = datos.recaudacionDiariaUSD.toFixed(2);
-        const bsFormateado = datos.recaudacionDiariaBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        this.txtRecaudacionDiaria.innerHTML = `$${usdFormateado} <span style="font-size: 0.6em; font-weight: normal; display: block;">Bs. ${bsFormateado}</span>`;
+        const totalUSD = datos.recaudacionDiariaUSD + (datos.recaudacionDiariaBS / this.tasa);
+        const totalUSDConsolidado = parseFloat(totalUSD.toFixed(2));
+        const totalBSConsolidado = parseFloat((totalUSDConsolidado * this.tasa).toFixed(2));
+        const usdFormateado = totalUSDConsolidado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const bsFormateado = totalBSConsolidado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.txtRecaudacionDiaria.innerHTML = `$ ${usdFormateado}<br>Bs. ${bsFormateado}`;
         if (datos.masVendido) {
             this.txtProductoMasVendido.textContent = datos.masVendido.nombre;
             this.txtProductoMasVendidoDetalle.textContent = `${datos.masVendido.cantidad} unidades`;
@@ -181,13 +184,16 @@ export default class Cl_vAdmin {
         }
         if (datos.mayorIngreso) {
             this.txtProductoMayorIngreso.textContent = datos.mayorIngreso.nombre;
-            const mayorUSDFormateado = datos.mayorIngreso.totalUSD.toFixed(2);
-            const mayorBSFormateado = datos.mayorIngreso.totalBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            this.txtProductoMayorIngresoDetalle.innerHTML = `$${mayorUSDFormateado} USD<br>Bs. ${mayorBSFormateado} BS`;
+            const totalUSD = datos.mayorIngreso.totalUSD + (datos.mayorIngreso.totalBS / this.tasa);
+            const totalUSDConsolidado = parseFloat(totalUSD.toFixed(2));
+            const totalBSConsolidado = parseFloat((totalUSDConsolidado * this.tasa).toFixed(2));
+            const mayorUSDFormateado = totalUSDConsolidado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const mayorBSFormateado = totalBSConsolidado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            this.txtProductoMayorIngresoDetalle.innerHTML = `$ ${mayorUSDFormateado}<br>Bs. ${mayorBSFormateado}`;
         }
         else {
             this.txtProductoMayorIngreso.textContent = "—";
-            this.txtProductoMayorIngresoDetalle.textContent = "$0.00 USD / Bs. 0,00 BS";
+            this.txtProductoMayorIngresoDetalle.innerHTML = `$ 0,00<br>Bs. 0,00`;
         }
     }
     llenarSelectorProductosAnalisis(productos) {
@@ -206,9 +212,12 @@ export default class Cl_vAdmin {
     }
     mostrarAnalisisProducto(unidades, ingresosUSD, ingresosBS) {
         this.txtUnidadesProducto.textContent = unidades.toString();
-        const ingUSDFormateado = ingresosUSD.toFixed(2);
-        const ingBSFormateado = ingresosBS.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        this.txtIngresoProducto.innerHTML = `$${ingUSDFormateado} USD<br><span class="fs-6 text-success" style="font-weight: normal;">Bs. ${ingBSFormateado} BS</span>`;
+        const totalUSD = ingresosUSD + (ingresosBS / this.tasa);
+        const totalUSDConsolidado = parseFloat(totalUSD.toFixed(2));
+        const totalBSConsolidado = parseFloat((totalUSDConsolidado * this.tasa).toFixed(2));
+        const ingUSDFormateado = totalUSDConsolidado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const ingBSFormateado = totalBSConsolidado.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        this.txtIngresoProducto.innerHTML = `$ ${ingUSDFormateado}<br>Bs. ${ingBSFormateado}`;
     }
 }
 //# sourceMappingURL=Cl_vAdmin.js.map

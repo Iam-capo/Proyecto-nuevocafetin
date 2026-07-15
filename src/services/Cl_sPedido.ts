@@ -17,4 +17,8 @@ export default class Cl_sPedido {
         const data = { estado: nuevoEstado };
         return await Cl_sPedidoApi.actualizarPorId(id, data);
     }
+
+    static async actualizar(id: string, datos: any): Promise<{ ok: boolean; mensaje: string }> {
+        return await Cl_sPedidoApi.actualizarPorId(id, datos);
+    }
 }

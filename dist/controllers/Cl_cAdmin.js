@@ -49,22 +49,24 @@ export default class Cl_cAdmin {
     }
     calcularReportes() {
         const hoyStr = new Date().toISOString().split('T')[0];
-        let recaudacionUSD = 0;
-        let recaudacionBS = 0;
+        let sumaVentasUSD = 0;
+        let sumaVentasBs = 0;
         const unidadesPorProducto = {};
         const ingresosPorProducto = {};
         this.pedidos.forEach(p => {
             if (p.estado !== "Cancelado") {
-                const esBs = p.metodoPago === "Efectivo Bs." || p.metodoPago === "Pago Móvil" || p.metodoPago === "Efectivo BS";
+                const esBs = p.metodoPago === "Efectivo Bs." || p.metodoPago === "Pago Móvil" || p.metodoPago === "Efectivo BS" || p.metodoPago === "Efectivo Bs";
                 const fechaPedidoStr = String(p.fecha || '');
                 const fechaPedido = fechaPedidoStr.split(' ')[0];
                 if (fechaPedido === hoyStr) {
-                    if (esBs) {
-                        recaudacionBS += p.total();
-                    }
-                    else {
-                        recaudacionUSD += p.total();
-                    }
+                    p.items.forEach(i => {
+                        if (esBs) {
+                            sumaVentasBs += parseFloat((i.precio * i.cantidad).toFixed(2));
+                        }
+                        else {
+                            sumaVentasUSD += parseFloat((i.precio * i.cantidad).toFixed(2));
+                        }
+                    });
                 }
                 p.items.forEach(i => {
                     if (!unidadesPorProducto[i.codigo]) {
@@ -75,10 +77,10 @@ export default class Cl_cAdmin {
                         ingresosPorProducto[i.codigo] = { nombre: i.nombre, totalUSD: 0, totalBS: 0 };
                     }
                     if (esBs) {
-                        ingresosPorProducto[i.codigo].totalBS += i.precio * i.cantidad;
+                        ingresosPorProducto[i.codigo].totalBS += parseFloat((i.precio * i.cantidad).toFixed(2));
                     }
                     else {
-                        ingresosPorProducto[i.codigo].totalUSD += i.precio * i.cantidad;
+                        ingresosPorProducto[i.codigo].totalUSD += parseFloat((i.precio * i.cantidad).toFixed(2));
                     }
                 });
             }
@@ -105,8 +107,8 @@ export default class Cl_cAdmin {
             }
         }
         this.vista.mostrarReportes({
-            recaudacionDiariaUSD: recaudacionUSD,
-            recaudacionDiariaBS: recaudacionBS,
+            recaudacionDiariaUSD: sumaVentasUSD,
+            recaudacionDiariaBS: sumaVentasBs,
             masVendido,
             mayorIngreso
         });

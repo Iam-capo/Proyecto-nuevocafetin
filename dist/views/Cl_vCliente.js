@@ -210,17 +210,19 @@ export default class Cl_vCliente {
         this.divProductos.innerHTML = "";
         productos.forEach(prod => {
             const div = document.createElement("div");
-            div.className = "col-md-3 mb-4";
+            div.className = "col-6 col-md-3 mb-4";
             let cantidad = this.cantidades.get(prod.codigo) || 0;
             const limit = prod.cantidad_disponible !== undefined ? prod.cantidad_disponible : 0;
             div.innerHTML = `
-                <div class="card-prod shadow-sm">
-                    <img src="img/${prod.imagen}" class="img-fluid mb-2" style="height: 80px;">
-                    <h6>${prod.nombre}</h6>
-                    <p class="text-muted fw-bold">$${prod.precio.toFixed(2)}</p>
-                    <div class="control-cantidad">
+                <div class="card-prod shadow-sm h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <img src="img/${prod.imagen}" class="img-fluid mb-2" style="height: 80px; object-fit: contain;">
+                        <h6 class="product-title">${prod.nombre}</h6>
+                        <p class="text-muted fw-bold mb-2">$${prod.precio.toFixed(2)}</p>
+                    </div>
+                    <div class="control-cantidad mt-auto">
                         <button class="btn-qty btn-minus" data-codigo="${prod.codigo}">-</button>
-                        <span id="cant-${prod.codigo}" class="fs-5">${cantidad}</span>
+                        <span id="cant-${prod.codigo}" class="fs-5 fw-bold mx-2">${cantidad}</span>
                         <button class="btn-qty btn-plus" data-codigo="${prod.codigo}">+</button>
                     </div>
                 </div>

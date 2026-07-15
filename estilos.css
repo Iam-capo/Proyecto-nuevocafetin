@@ -134,13 +134,14 @@ body {
 
     /* Botones circulares */
     .btn-qty {
-        width: 35px;
-        height: 35px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         border: 1px solid #78c0a8;
         background: #eafaf4;
         color: #2c7a5f;
-        font-weight: bold;
+        font-weight: 500;
+        font-size: 1.3rem;
         cursor: pointer;
         display: flex;
         justify-content: center;
@@ -231,5 +232,45 @@ body {
 .text-bolivares-sutil {
     color: #6c757d;
     opacity: 0.6;
+}
+
+/* Adaptabilidad a dispositivos móviles (Responsive) */
+@media (max-width: 768px) {
+    .btn-qty {
+        width: 42px;
+        height: 42px;
+        font-size: 1.2rem;
+    }
+    
+    .product-title {
+        font-size: 0.85rem;
+        min-height: 2.6em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+
+    .card-prod {
+        padding: 10px;
+    }
+
+    /* Tabla de carrito táctil y responsive */
+    #tablaCarrito td {
+        font-size: 0.85rem;
+        padding: 8px 4px;
+    }
+    
+    .btn-eliminar {
+        padding: 8px 10px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    #btEnviar {
+        padding: 14px 20px;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
 }
 

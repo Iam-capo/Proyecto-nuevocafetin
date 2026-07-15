@@ -41,7 +41,16 @@ agregar(producto: { codigo: string; nombre: string; precio: number }, cantidad: 
     }
 
     calcularTotal(): number {
-        return this.items.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+        const total = this.items.reduce((sum, item) => {
+            const itemTotal = parseFloat((item.precio * item.cantidad).toFixed(2));
+            return sum + itemTotal;
+        }, 0);
+        return parseFloat(total.toFixed(2));
+    }
+
+    calcularTotalEnBs(tasa: number): number {
+        const totalBs = this.calcularTotal() * tasa;
+        return parseFloat(totalBs.toFixed(2));
     }
 
     estaVacio(): boolean {

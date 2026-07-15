@@ -29,7 +29,15 @@ export default class Cl_mCarrito {
         this.items = [];
     }
     calcularTotal() {
-        return this.items.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+        const total = this.items.reduce((sum, item) => {
+            const itemTotal = parseFloat((item.precio * item.cantidad).toFixed(2));
+            return sum + itemTotal;
+        }, 0);
+        return parseFloat(total.toFixed(2));
+    }
+    calcularTotalEnBs(tasa) {
+        const totalBs = this.calcularTotal() * tasa;
+        return parseFloat(totalBs.toFixed(2));
     }
     estaVacio() {
         return this.items.length === 0;

@@ -13,5 +13,8 @@ export default class Cl_sPedido {
         const data = { estado: nuevoEstado };
         return await Cl_sPedidoApi.actualizarPorId(id, data);
     }
+    static async actualizar(id, datos) {
+        return await Cl_sPedidoApi.actualizarPorId(id, datos);
+    }
 }
 //# sourceMappingURL=Cl_sPedido.js.map

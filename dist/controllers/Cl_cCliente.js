@@ -1,7 +1,8 @@
 import sPedido from "../services/Cl_sPedido.js";
 import sProducto from "../services/Cl_sProducto.js";
 import Cl_mCarrito from "../models/Cl_mCarrito.js";
-import Cl_sDolar from "../services/Cl_sDolar.js";
+import Cl_sTasa from "../services/Cl_sTasa.js";
+import Cl_mPedido from "../models/Cl_mPedido.js";
 export default class Cl_cCliente {
     vista;
     productos = [];
@@ -27,7 +28,8 @@ export default class Cl_cCliente {
         this.cargarProductos();
     }
     async cargarProductos() {
-        this.tasa = await Cl_sDolar.obtenerTasa();
+        this.tasa = await Cl_sTasa.obtenerTasa();
+        Cl_mPedido.tasaActual = this.tasa;
         this.vista.setTasa(this.tasa);
         const resultado = await sProducto.obtenerTodos();
         if (resultado.ok) {
@@ -135,21 +137,26 @@ export default class Cl_cCliente {
         const ahora = new Date();
         const fecha = ahora.toISOString().split('T')[0]; // Formato YYYY-MM-DD
         const hora = ahora.toTimeString().split(' ')[0]; // Formato HH:MM:SS
-        const esBolivares = metodoPago === "Efectivo Bs." || metodoPago === "Pago Móvil" || metodoPago === "Efectivo BS";
+        // Asegurar que la tasa de cambio esté actualizada al enviar el pedido
+        this.tasa = await Cl_sTasa.obtenerTasa();
+        Cl_mPedido.tasaActual = this.tasa;
+        this.vista.setTasa(this.tasa);
+        const esBolivares = metodoPago === "Efectivo Bs." || metodoPago === "Pago Móvil" || metodoPago === "Efectivo BS" || metodoPago === "Efectivo Bs";
         let itemsParaEnvio = this.carrito.getItemsParaEnvio();
-        let total = this.carrito.calcularTotal();
+        const totalUSD = parseFloat(this.carrito.calcularTotal().toFixed(2));
+        const totalBs = parseFloat(this.carrito.calcularTotalEnBs(this.tasa).toFixed(2));
         if (esBolivares) {
             itemsParaEnvio = itemsParaEnvio.map((item) => ({
                 ...item,
-                precio: item.precio * this.tasa
+                precio: parseFloat((item.precio * this.tasa).toFixed(2))
             }));
-            total = total * this.tasa;
         }
         const pedido = {
             NomCliente: nomCliente,
             Cedula: cedula,
             Items: itemsParaEnvio,
-            Total: total,
+            Total: totalUSD,
+            TotalBs: totalBs,
             MetodoPago: metodoPago,
             DetallesPago: detallesPago,
             Fecha: `${fecha} ${hora}`,

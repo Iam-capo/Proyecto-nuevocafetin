@@ -9,7 +9,7 @@ export default interface I_vAdmin {
     mostrarModal(tipo: "success" | "danger" | "warning", mensaje: string): void;
     
     mostrarReportes(datos: { 
-        recaudacionDiariaUSD: number; 
+        recaudacionDiariaUSD: number;
         recaudacionDiariaBS: number; 
         masVendido: { nombre: string; cantidad: number } | null; 
         mayorIngreso: { nombre: string; totalUSD: number; totalBS: number } | null; 
