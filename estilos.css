@@ -234,48 +234,290 @@ body {
     opacity: 0.6;
 }
 
-/* Adaptabilidad a dispositivos móviles por medio de Escala Proporcional (Desktop Miniaturizado) */
+/* Adaptabilidad Real, Responsiva y Compacta en Dispositivos Móviles (CSS Grid, Flexbox y Media Queries) */
 @media (max-width: 768px) {
     body {
-        min-width: 1200px !important;
-        zoom: 0.32 !important; /* Miniaturiza la pantalla para que quepa perfecta a lo ancho */
+        min-width: auto !important;
+        zoom: 1 !important;
     }
 
-    /* Conservar el comportamiento horizontal de la cuadrícula de escritorio */
+    /* Ajuste general del contenedor principal para aprovechar el ancho */
+    .container {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        max-width: 100% !important;
+    }
+
+    /* Conservar distribución en paralelo y compacta de las columnas */
     .row {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: wrap !important;
+        margin-left: -4px !important;
+        margin-right: -4px !important;
     }
 
-    /* Asegurar que las columnas mantengan su distribución de PC */
-    .col-lg-8 {
-        width: 66.666667% !important;
-        flex: 0 0 66.666667% !important;
+    /* --- VISTA DE CLIENTE --- */
+
+    /* Sección de productos toma el 58% de ancho para dejar espacio al carrito */
+    .col-lg-8.seccion-productos-scroll {
+        width: 58% !important;
+        flex: 0 0 58% !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        max-height: 85vh !important;
     }
-    .col-lg-4 {
-        width: 33.333333% !important;
-        flex: 0 0 33.333333% !important;
+
+    /* Columna del carrito al lado (38%) de forma fija/sticky accesible para evitar scroll al fondo */
+    .col-lg-4.col-carrito-sticky {
+        width: 42% !important;
+        flex: 0 0 42% !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        position: sticky !important;
+        top: 10px !important;
+        height: calc(100vh - 20px) !important;
+        overflow-y: auto !important;
     }
-    .col-md-6 {
+
+    /* Tarjetas de producto en paralelo compactas de 2 columnas */
+    .seccion-productos-scroll #listaProductos > div {
         width: 50% !important;
         flex: 0 0 50% !important;
+        padding: 4px !important;
+        margin-bottom: 8px !important;
     }
-    .col-md-2 {
-        width: 16.666667% !important;
-        flex: 0 0 16.666667% !important;
+
+    .card-prod {
+        padding: 8px !important;
+        border-radius: 12px !important;
     }
-    .col-md-3 {
-        width: 25% !important;
-        flex: 0 0 25% !important;
+
+    .card-prod img {
+        height: 50px !important;
+        margin-bottom: 4px !important;
     }
-    .col-md-5 {
-        width: 41.666667% !important;
-        flex: 0 0 41.666667% !important;
+
+    .card-prod h6.product-title {
+        font-size: 0.75rem !important;
+        margin-bottom: 2px !important;
+        line-height: 1.1 !important;
     }
-    .col-md-7 {
-        width: 58.333333% !important;
-        flex: 0 0 58.333333% !important;
+
+    .card-prod p.text-muted {
+        font-size: 0.75rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    .control-cantidad {
+        gap: 4px !important;
+        margin-top: 4px !important;
+    }
+
+    .btn-qty {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 1rem !important;
+    }
+
+    /* Carrito compacto en móvil */
+    .col-carrito-sticky .card {
+        margin-bottom: 6px !important;
+        border-radius: 12px !important;
+    }
+
+    .col-carrito-sticky .card-header {
+        font-size: 0.9rem !important;
+        padding: 6px 8px !important;
+    }
+
+    .col-carrito-sticky .card-body {
+        padding: 8px !important;
+    }
+
+    .col-carrito-sticky .form-label {
+        font-size: 0.7rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    .col-carrito-sticky .form-control,
+    .col-carrito-sticky .form-select {
+        font-size: 0.75rem !important;
+        padding: 4px 6px !important;
+        height: auto !important;
+    }
+
+    .col-carrito-sticky .table th,
+    .col-carrito-sticky .table td {
+        font-size: 0.68rem !important;
+        padding: 4px 2px !important;
+    }
+
+    .col-carrito-sticky .btn-sm {
+        font-size: 0.65rem !important;
+        padding: 2px 4px !important;
+    }
+
+    .col-carrito-sticky #spTotalPedido {
+        font-size: 1rem !important;
+    }
+
+    .col-carrito-sticky .btn-success {
+        font-size: 0.85rem !important;
+        padding: 6px !important;
+    }
+
+    /* Cabecera compacta */
+    h1.h3 {
+        font-size: 1.25rem !important;
+        margin-bottom: 0 !important;
+    }
+
+    h1::after {
+        display: none !important;
+    }
+
+    .d-flex.justify-content-between.align-items-center.mb-4 {
+        margin-bottom: 8px !important;
+    }
+
+    .btn-outline-secondary {
+        font-size: 0.8rem !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Buscador y selector de categorías */
+    #inBuscar, #selectCategoria {
+        font-size: 0.8rem !important;
+        padding: 6px 10px !important;
+    }
+
+    /* --- VISTA DE ADMINISTRADOR --- */
+
+    /* Pestañas de administración compactas */
+    #adminTabs .nav-link {
+        font-size: 0.78rem !important;
+        padding: 6px 10px !important;
+    }
+
+    /* Filtros en panel de pedidos */
+    #pedidos .card-body.row {
+        padding: 8px !important;
+    }
+
+    #pedidos .card-body.row > div {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        margin-bottom: 6px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    #pedidos label {
+        font-size: 0.72rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    #pedidos .form-select,
+    #pedidos .form-control {
+        font-size: 0.75rem !important;
+        padding: 4px 6px !important;
+    }
+
+    /* Tablas de pedidos y productos súper compactas */
+    .table {
+        font-size: 0.72rem !important;
+    }
+
+    .table th,
+    .table td {
+        padding: 6px 4px !important;
+    }
+
+    .table .btn-sm {
+        font-size: 0.68rem !important;
+        padding: 2px 4px !important;
+        margin: 1px !important;
+    }
+
+    /* Formulario de registro/guardado de productos compacto */
+    #formProducto {
+        padding: 8px !important;
+    }
+
+    #formProducto > div {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        margin-bottom: 6px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    #formProducto > div.col-md-3 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+
+    #formProducto label {
+        font-size: 0.72rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    #formProducto .form-control {
+        font-size: 0.75rem !important;
+        padding: 4px 6px !important;
+    }
+
+    #formProducto .btn-primary {
+        font-size: 0.8rem !important;
+        padding: 6px !important;
+        margin-top: 18px !important;
+    }
+
+    /* Reportes y Paneles de Análisis en fila horizontal compacta */
+    #reportes .row {
+        margin-left: -4px !important;
+        margin-right: -4px !important;
+    }
+
+    #reportes .col-md-4 {
+        width: 33.333333% !important;
+        flex: 0 0 33.333333% !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    #reportes .card-body {
+        padding: 6px !important;
+    }
+
+    #reportes h6 {
+        font-size: 0.58rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    #reportes h3 {
+        font-size: 0.85rem !important;
+    }
+
+    #reportes h4 {
+        font-size: 0.75rem !important;
+    }
+
+    #reportes small {
+        font-size: 0.58rem !important;
+    }
+
+    /* Análisis de producto individual */
+    #reportes .card-body.row > div.col-md-6 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+
+    #reportes .card-body.row .fs-4 {
+        font-size: 0.9rem !important;
     }
 }
 
