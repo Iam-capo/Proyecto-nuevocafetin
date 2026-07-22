@@ -234,43 +234,48 @@ body {
     opacity: 0.6;
 }
 
-/* Adaptabilidad a dispositivos móviles (Responsive) */
+/* Adaptabilidad a dispositivos móviles por medio de Escala Proporcional (Desktop Miniaturizado) */
 @media (max-width: 768px) {
-    .btn-qty {
-        width: 42px;
-        height: 42px;
-        font-size: 1.2rem;
-    }
-    
-    .product-title {
-        font-size: 0.85rem;
-        min-height: 2.6em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 5px;
-        line-height: 1.2;
+    body {
+        min-width: 1200px !important;
+        zoom: 0.32 !important; /* Miniaturiza la pantalla para que quepa perfecta a lo ancho */
     }
 
-    .card-prod {
-        padding: 10px;
+    /* Conservar el comportamiento horizontal de la cuadrícula de escritorio */
+    .row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
     }
 
-    /* Tabla de carrito táctil y responsive */
-    #tablaCarrito td {
-        font-size: 0.85rem;
-        padding: 8px 4px;
+    /* Asegurar que las columnas mantengan su distribución de PC */
+    .col-lg-8 {
+        width: 66.666667% !important;
+        flex: 0 0 66.666667% !important;
     }
-    
-    .btn-eliminar {
-        padding: 8px 10px !important;
-        font-size: 0.8rem !important;
+    .col-lg-4 {
+        width: 33.333333% !important;
+        flex: 0 0 33.333333% !important;
     }
-    
-    #btEnviar {
-        padding: 14px 20px;
-        font-size: 1.1rem;
-        font-weight: bold;
+    .col-md-6 {
+        width: 50% !important;
+        flex: 0 0 50% !important;
+    }
+    .col-md-2 {
+        width: 16.666667% !important;
+        flex: 0 0 16.666667% !important;
+    }
+    .col-md-3 {
+        width: 25% !important;
+        flex: 0 0 25% !important;
+    }
+    .col-md-5 {
+        width: 41.666667% !important;
+        flex: 0 0 41.666667% !important;
+    }
+    .col-md-7 {
+        width: 58.333333% !important;
+        flex: 0 0 58.333333% !important;
     }
 }
 
