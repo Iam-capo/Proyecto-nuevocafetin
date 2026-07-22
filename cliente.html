@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafetín - Cliente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="./img/te-Photoroom.png" type="image/x-icon">
+    <style>
+   
+</style>
+</head>
+<body>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Cafetín - Cliente</h1>
+        <button class="btn btn-outline-secondary" onclick="location.href='index.html'">Ir a panel principal</button>
+    </div>
+    <div id="clienteAlertContainer"></div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">Nuestros Productos</div>
+                <div class="card-body">
+                    <!-- Buscador y Filtros -->
+                    <div class="row g-3 mb-4 align-items-center">
+                        <div class="col-md-7">
+                            <div class="input-group mb-0">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search text-muted" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                    </svg>
+                                </span>
+                                <input type="text" id="inBuscar" class="form-control border-start-0 ps-0" placeholder="Buscar productos por nombre...">
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <select id="selectCategoria" class="form-select">
+                                <option value="Todas">Todas las categorías</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" id="listaProductos"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white fw-bold">Tu pedido</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del cliente</label>
+                        <input type="text" id="inNomCliente" class="form-control" placeholder="Tu nombre">
+                        <div id="errNomCliente" class="text-danger mt-1" style="display: none; font-size: 0.85em;"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cédula del cliente</label>
+                        <input type="text" id="inCedCliente" class="form-control" placeholder="Tu cédula">
+                        <div id="errCedCliente" class="text-danger mt-1" style="display: none; font-size: 0.85em;"></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead><tr><th>Producto</th><th>Cantidad</th><th>Subtotal</th><th></th></thead>
+                            <tbody id="tablaCarrito"></tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total:</span>
+                        <span id="spTotalPedido">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">Forma de pago</div>
+                <div class="card-body">
+                    <select id="metodoPago" class="form-select mb-3">
+                        <option value="">Seleccione</option>
+                        <option value="Efectivo USD">Efectivo USD</option>
+                        <option value="Efectivo Bs.">Efectivo Bs.</option>
+                        <option value="Pago Móvil">Pago Móvil</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <div id="divPagoMovil" style="display:none">
+                        <label class="form-label">Referencia / Nro. Teléfono</label>
+                        <input type="text" id="refPagoMovil" class="form-control mb-2">
+                        <div id="errRefPagoMovil" class="text-danger mt-1 mb-2" style="display: none; font-size: 0.85em;"></div>
+                    </div>
+                    <div id="divOtro" style="display:none">
+                        <label class="form-label">Descripción</label>
+                        <input type="text" id="descOtro" class="form-control mb-2">
+                    </div>
+                    <button id="btEnviar" class="btn btn-success w-100">Enviar pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module">
+    import Cl_cCliente from "./dist/controllers/Cl_cCliente.js";
+    import Cl_vCliente from "./dist/views/Cl_vCliente.js";
+    const vista = new Cl_vCliente();
+    new Cl_cCliente(vista);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

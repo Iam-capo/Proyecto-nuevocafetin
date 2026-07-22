@@ -192,12 +192,12 @@ body {
 }
 
 .btn-success {
-    background-color: rgb(244, 125, 56);
+    background-color: #059302;
     font-weight: bold;
 }
 
 .btn-success:hover {
-    background-color: rgba(246, 107, 15, 0.91);
+    background-color: rgba(4, 102, 26, 0.91);
 }
 
 /* Buscador y Selector de Categorías */
