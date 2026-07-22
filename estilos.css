@@ -274,3 +274,32 @@ body {
     }
 }
 
+/* --- MEJORAS DE DESPLAZAMIENTO (SCROLL) --- */
+
+/* Scroll vertical para la sección de productos (Vista Cliente) */
+.seccion-productos-scroll {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* El carrito se queda completamente fijo e inmóvil al lado en pantallas grandes */
+@media (min-width: 992px) {
+    .col-carrito-sticky {
+        position: sticky;
+        top: 24px;
+        height: fit-content;
+    }
+}
+
+/* Scroll horizontal para la tabla de pedidos (Vista Administrador) */
+.tabla-pedidos-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Scroll vertical para la lista de productos (Vista Administrador) */
+.tabla-productos-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
