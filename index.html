@@ -8,7 +8,11 @@
      <link rel="shortcut icon" href="./img/te-Photoroom.png" type="image/x-icon">
     <style>
         body {
-            background: #f8f9fa;
+            background: #efebe9; /* Crema de café suave */
+            color: #3e2723; /* Espresso oscuro */
+            overflow: hidden; /* Evita barras de desplazamiento */
+            position: relative;
+            font-family: 'Poppins', sans-serif;
         }
         .container {
             display: flex;
@@ -17,10 +21,133 @@
             align-items: center;
             height: 100vh;
             min-height: 60vh;
+            position: relative;
+            z-index: 10; /* Para que el login esté por encima de la lluvia */
         }
+        .display-5 {
+            color: #3e2723 !important;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        .btn-primary {
+            background-color: #5d4037 !important;
+            border-color: #5d4037 !important;
+            color: white !important;
+        }
+        .btn-primary:hover {
+            background-color: #3e2723 !important;
+            border-color: #3e2723 !important;
+        }
+        .btn-secondary {
+            background-color: #b5651d !important;
+            border-color: #b5651d !important;
+            color: white !important;
+        }
+        .btn-secondary:hover {
+            background-color: #9e5312 !important;
+            border-color: #9e5312 !important;
+        }
+        .modal-content {
+            background-color: #fbf9f8 !important;
+            border: 1px solid #e0d4cc !important;
+            border-radius: 15px !important;
+            color: #3e2723 !important;
+        }
+        .modal-header {
+            border-bottom: 1px solid #e0d4cc !important;
+        }
+        
+        /* Contenedor de la lluvia de café */
+        .coffee-rain-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none; /* Asegura que no interfiera con clicks */
+        }
+
+        /* Elementos de la lluvia */
+        .coffee-rain-bg span {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            user-select: none;
+            pointer-events: none;
+            animation-name: rainFall;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        @keyframes rainFall {
+            0% {
+                top: -50px;
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                top: 105vh;
+                transform: translate(15px, 100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Estilización de los 35 elementos con nth-child para dar aleatoriedad natural */
+        .coffee-rain-bg span:nth-child(1) { left: 3%; animation-duration: 7s; animation-delay: -2s; font-size: 20px; }
+        .coffee-rain-bg span:nth-child(2) { left: 8%; animation-duration: 11s; animation-delay: -5s; font-size: 28px; }
+        .coffee-rain-bg span:nth-child(3) { left: 14%; animation-duration: 5s; animation-delay: -1s; font-size: 22px; }
+        .coffee-rain-bg span:nth-child(4) { left: 19%; animation-duration: 13s; animation-delay: -8s; font-size: 32px; }
+        .coffee-rain-bg span:nth-child(5) { left: 23%; animation-duration: 9s; animation-delay: -4s; font-size: 24px; }
+        .coffee-rain-bg span:nth-child(6) { left: 28%; animation-duration: 6s; animation-delay: -2s; font-size: 18px; }
+        .coffee-rain-bg span:nth-child(7) { left: 33%; animation-duration: 12s; animation-delay: -6s; font-size: 26px; }
+        .coffee-rain-bg span:nth-child(8) { left: 38%; animation-duration: 8s; animation-delay: -3s; font-size: 30px; }
+        .coffee-rain-bg span:nth-child(9) { left: 42%; animation-duration: 10s; animation-delay: -7s; font-size: 21px; }
+        .coffee-rain-bg span:nth-child(10) { left: 47%; animation-duration: 14s; animation-delay: -12s; font-size: 25px; }
+        .coffee-rain-bg span:nth-child(11) { left: 52%; animation-duration: 7s; animation-delay: -1s; font-size: 29px; }
+        .coffee-rain-bg span:nth-child(12) { left: 57%; animation-duration: 11s; animation-delay: -4s; font-size: 23px; }
+        .coffee-rain-bg span:nth-child(13) { left: 61%; animation-duration: 5s; animation-delay: -3s; font-size: 27px; }
+        .coffee-rain-bg span:nth-child(14) { left: 66%; animation-duration: 13s; animation-delay: -9s; font-size: 19px; }
+        .coffee-rain-bg span:nth-child(15) { left: 71%; animation-duration: 9s; animation-delay: -5s; font-size: 31px; }
+        .coffee-rain-bg span:nth-child(16) { left: 76%; animation-duration: 6s; animation-delay: -2s; font-size: 24px; }
+        .coffee-rain-bg span:nth-child(17) { left: 81%; animation-duration: 12s; animation-delay: -7s; font-size: 28px; }
+        .coffee-rain-bg span:nth-child(18) { left: 85%; animation-duration: 8s; animation-delay: -4s; font-size: 22px; }
+        .coffee-rain-bg span:nth-child(19) { left: 90%; animation-duration: 10s; animation-delay: -10s; font-size: 33px; }
+        .coffee-rain-bg span:nth-child(20) { left: 95%; animation-duration: 14s; animation-delay: -5s; font-size: 20px; }
+        .coffee-rain-bg span:nth-child(21) { left: 5%; animation-duration: 8s; animation-delay: -1s; font-size: 25px; }
+        .coffee-rain-bg span:nth-child(22) { left: 11%; animation-duration: 10s; animation-delay: -6s; font-size: 21px; }
+        .coffee-rain-bg span:nth-child(23) { left: 17%; animation-duration: 6s; animation-delay: -4s; font-size: 27px; }
+        .coffee-rain-bg span:nth-child(24) { left: 22%; animation-duration: 12s; animation-delay: -3s; font-size: 19px; }
+        .coffee-rain-bg span:nth-child(25) { left: 27%; animation-duration: 9s; animation-delay: -8s; font-size: 31px; }
+        .coffee-rain-bg span:nth-child(26) { left: 32%; animation-duration: 7s; animation-delay: -2s; font-size: 24px; }
+        .coffee-rain-bg span:nth-child(27) { left: 37%; animation-duration: 13s; animation-delay: -5s; font-size: 28px; }
+        .coffee-rain-bg span:nth-child(28) { left: 44%; animation-duration: 11s; animation-delay: -9s; font-size: 23px; }
+        .coffee-rain-bg span:nth-child(29) { left: 50%; animation-duration: 5s; animation-delay: -2s; font-size: 26px; }
+        .coffee-rain-bg span:nth-child(30) { left: 55%; animation-duration: 14s; animation-delay: -11s; font-size: 30px; }
+        .coffee-rain-bg span:nth-child(31) { left: 63%; animation-duration: 9s; animation-delay: -4s; font-size: 22px; }
+        .coffee-rain-bg span:nth-child(32) { left: 69%; animation-duration: 12s; animation-delay: -7s; font-size: 29px; }
+        .coffee-rain-bg span:nth-child(33) { left: 74%; animation-duration: 6s; animation-delay: -3s; font-size: 18px; }
+        .coffee-rain-bg span:nth-child(34) { left: 83%; animation-duration: 10s; animation-delay: -5s; font-size: 25px; }
+        .coffee-rain-bg span:nth-child(35) { left: 92%; animation-duration: 13s; animation-delay: -10s; font-size: 27px; }
     </style>
 </head>
 <body>
+<!-- Contenedor del fondo animado de lluvia de café -->
+<div class="coffee-rain-bg">
+    <span>☕</span><span>🫘</span><span>☕</span><span>🫘</span><span>☕</span>
+    <span>🫘</span><span>☕</span><span>🫘</span><span>☕</span><span>🫘</span>
+    <span>☕</span><span>🫘</span><span>☕</span><span>🫘</span><span>☕</span>
+    <span>🫘</span><span>☕</span><span>🫘</span><span>☕</span><span>🫘</span>
+    <span>☕</span><span>🫘</span><span>☕</span><span>🫘</span><span>☕</span>
+    <span>🫘</span><span>☕</span><span>🫘</span><span>☕</span><span>🫘</span>
+    <span>☕</span><span>🫘</span><span>☕</span><span>🫘</span><span>☕</span>
+</div>
+
 <div class="container py-5">
         <div class="text-center mb-5 hero d-flex flex-column justify-content-center align-items-center">
             <h1 class="display-5 fw-bold">Bienvenido al Cafetín</h1>
@@ -39,38 +166,40 @@
                         <button href="./admin.html" class="btn btn-primary btn-lg mt-3" data-bs-toggle="modal" data-bs-target="#adminLoginForm">
                            admin
                         </button>
-                        <div class="modal fade" id="adminLoginForm" tabindex="-1" aria-labelledby="adminLoginFormLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="adminLoginFormLabel">Administrador</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="adminLoginForm">
-                                            <div class="mb-3">
-                                                <label for="adminUsuario" class="form-label">Usuario</label>
-                                                <input type="text" class="form-control" id="adminUsuario" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="adminContrasena" class="form-label">Contraseña</label>
-                                                <input type="password" class="form-control" id="adminContrasena" required>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Ingresar</button>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div id="landingAlert"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- El Modal de login colocado al final del body para evitar conflictos de z-index y stacking context con Bootstrap -->
+    <div class="modal fade" id="adminLoginForm" tabindex="-1" aria-labelledby="adminLoginFormLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminLoginFormLabel">Administrador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAdminLogin">
+                        <div class="mb-3">
+                            <label for="adminUsuario" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" id="adminUsuario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminContrasena" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="adminContrasena" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ingresar</button>
+                    </form>
+                </div>
+                <div id="landingAlert" class="px-3 pb-3"></div>
+            </div>
+        </div>
+    </div>
 </body>
 <script>
-    const form = document.getElementById('adminLoginForm');
+    const form = document.getElementById('formAdminLogin');
         const alertContainer = document.getElementById('landingAlert');
 
         form.addEventListener('submit', function(event) {
