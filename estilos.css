@@ -1,6 +1,17 @@
 /* 1. Importamos una fuente profesional de Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
+/* Reset y Box-Sizing */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 /* 2. Aplicamos la fuente a todo el sitio para dar consistencia */
 body {
     font-family: 'Poppins', sans-serif;
@@ -236,6 +247,14 @@ body {
 
 /* Adaptabilidad Real, Responsiva y Compacta en Dispositivos Móviles (CSS Grid, Flexbox y Media Queries) */
 @media (max-width: 768px) {
+    html, body {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
     body {
         min-width: auto !important;
         zoom: 1 !important;
@@ -246,6 +265,7 @@ body {
         padding-left: 8px !important;
         padding-right: 8px !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     /* Conservar distribución en paralelo y compacta de las columnas */
@@ -259,65 +279,93 @@ body {
 
     /* --- VISTA DE CLIENTE --- */
 
-    /* Sección de productos toma el 58% de ancho para dejar espacio al carrito */
-    .col-lg-8.seccion-productos-scroll {
-        width: 58% !important;
-        flex: 0 0 58% !important;
-        padding-left: 4px !important;
-        padding-right: 4px !important;
-        max-height: 85vh !important;
+    /* Fila principal en columna para apilamiento vertical */
+    .container > .row {
+        display: flex !important;
+        flex-direction: column !important;
     }
 
-    /* Columna del carrito al lado (38%) de forma fija/sticky accesible para evitar scroll al fondo */
+    /* Columna del carrito al lado (38%) de forma fija/sticky accesible para evitar scroll al fondo - Rediseño Móvil por Cline */
     .col-lg-4.col-carrito-sticky {
-        width: 42% !important;
-        flex: 0 0 42% !important;
+        order: 1 !important;
+        width: 100% !important;
+        flex: 0 0 auto !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 1030 !important;
+        max-height: 40vh !important;
+        overflow-y: auto !important;
         padding-left: 4px !important;
         padding-right: 4px !important;
-        position: sticky !important;
-        top: 10px !important;
-        height: calc(100vh - 20px) !important;
+        margin-bottom: 12px !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 15px !important;
+    }
+
+    /* Sección de productos toma el 58% de ancho para dejar espacio al carrito - Rediseño Móvil por Cline */
+    .col-lg-8.seccion-productos-scroll {
+        order: 2 !important;
+        width: 100% !important;
+        flex: 0 0 auto !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        max-height: 50vh !important;
         overflow-y: auto !important;
     }
 
-    /* Tarjetas de producto en paralelo compactas de 2 columnas */
+    /* Cuadrícula de productos de exactamente 4 columnas */
+    #listaProductos {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 4px !important;
+        width: 100% !important;
+    }
+
     .seccion-productos-scroll #listaProductos > div {
-        width: 50% !important;
-        flex: 0 0 50% !important;
-        padding: 4px !important;
-        margin-bottom: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: none !important;
+        padding: 2px !important;
+        margin-bottom: 0 !important;
     }
 
     .card-prod {
-        padding: 8px !important;
-        border-radius: 12px !important;
+        padding: 4px !important;
+        border-radius: 8px !important;
     }
 
     .card-prod img {
-        height: 50px !important;
-        margin-bottom: 4px !important;
+        height: 40px !important;
+        margin-bottom: 2px !important;
     }
 
     .card-prod h6.product-title {
-        font-size: 0.75rem !important;
+        font-size: 0.6rem !important;
         margin-bottom: 2px !important;
         line-height: 1.1 !important;
     }
 
     .card-prod p.text-muted {
-        font-size: 0.75rem !important;
+        font-size: 0.6rem !important;
         margin-bottom: 4px !important;
     }
 
     .control-cantidad {
-        gap: 4px !important;
+        gap: 2px !important;
         margin-top: 4px !important;
     }
 
     .btn-qty {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 1rem !important;
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.75rem !important;
+    }
+
+    .seccion-productos-scroll #listaProductos span[id^="cant-"] {
+        font-size: 0.7rem !important;
+        margin-left: 2px !important;
+        margin-right: 2px !important;
     }
 
     /* Carrito compacto en móvil */
